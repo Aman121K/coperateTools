@@ -168,25 +168,23 @@ export function ToolLayout({
         </div>
       )}
 
-      <div className="flex-1 overflow-auto p-4 sm:p-6">
+      <div className="flex-1 min-h-0 flex flex-col p-4 sm:p-6">
         {children ? (
           children
         ) : singlePanel ? (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-[var(--text-secondary)] mb-2">{inputLabel}</label>
-              <Editor value={input} onChange={onInputChange} language={inputLanguage} height="400px" />
-            </div>
+          <div className="flex-1 min-h-0 flex flex-col">
+            <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">{inputLabel}</label>
+            <Editor value={input} onChange={onInputChange} language={inputLanguage} height="100%" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm text-[var(--text-secondary)] mb-2">{inputLabel}</label>
-              <Editor value={input} onChange={onInputChange} language={inputLanguage} height="400px" />
+          <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 min-h-0 flex flex-col">
+              <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">{inputLabel}</label>
+              <Editor value={input} onChange={onInputChange} language={inputLanguage} height="100%" />
             </div>
-            <div>
-              <label className="block text-sm text-[var(--text-secondary)] mb-2">{outputLabel}</label>
-              <Editor value={output} onChange={() => {}} language={outputLanguage} height="400px" readOnly />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">{outputLabel}</label>
+              <Editor value={output} onChange={() => {}} language={outputLanguage} height="100%" readOnly />
             </div>
           </div>
         )}

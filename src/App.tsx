@@ -29,6 +29,7 @@ import { CronBuilder } from './tools/debug/CronBuilder';
 import { TimestampConverter } from './tools/debug/TimestampConverter';
 import { CaseConverter } from './tools/debug/CaseConverter';
 import { PasswordGenerator } from './tools/debug/PasswordGenerator';
+import { PasswordStrengthChecker } from './tools/debug/PasswordStrengthChecker';
 import { ColorConverter } from './tools/debug/ColorConverter';
 import { LoremIpsum } from './tools/debug/LoremIpsum';
 
@@ -62,6 +63,9 @@ import { EmiCalculator } from './tools/finance/EmiCalculator';
 import { NumberToWords } from './tools/finance/NumberToWords';
 import { PercentageCalculator } from './tools/finance/PercentageCalculator';
 import { InvoiceGenerator } from './tools/finance/InvoiceGenerator';
+import { TipCalculator } from './tools/finance/TipCalculator';
+import { SplitBillCalculator } from './tools/finance/SplitBillCalculator';
+import { CompoundInterestCalculator } from './tools/finance/CompoundInterestCalculator';
 
 // Admin
 import { QrGenerator } from './tools/admin/QrGenerator';
@@ -70,6 +74,15 @@ import { PdfMerge } from './tools/admin/PdfMerge';
 import { PdfSplit } from './tools/admin/PdfSplit';
 import { UnitConverter } from './tools/admin/UnitConverter';
 import { DateCalculator } from './tools/admin/DateCalculator';
+import { AgeCalculator } from './tools/admin/AgeCalculator';
+import { BmiCalculator } from './tools/admin/BmiCalculator';
+import { WorkingDaysCalculator } from './tools/admin/WorkingDaysCalculator';
+import { ConversionTool } from './tools/convert/ConversionTool';
+import { ImageToPdf } from './tools/convert/ImageToPdf';
+import { PngToIco } from './tools/convert/PngToIco';
+import { PdfToTxt } from './tools/convert/PdfToTxt';
+import { AudioConvert } from './tools/convert/AudioConvert';
+import { VideoConvert } from './tools/convert/VideoConvert';
 
 // HR
 import { LeaveCalculator } from './tools/hr/LeaveCalculator';
@@ -120,6 +133,7 @@ import { FlashcardGenerator } from './tools/student/FlashcardGenerator';
 import { ReadingTimeCalculator } from './tools/student/ReadingTimeCalculator';
 import { StudyPlanner } from './tools/student/StudyPlanner';
 import { NoteOutlineGenerator } from './tools/student/NoteOutlineGenerator';
+import { GpaCalculator } from './tools/student/GpaCalculator';
 
 function AppContent() {
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -198,12 +212,24 @@ function AppContent() {
           <Route path="/tools/finance/number-words" element={<NumberToWords />} />
           <Route path="/tools/finance/percentage" element={<PercentageCalculator />} />
           <Route path="/tools/finance/invoice" element={<InvoiceGenerator />} />
+          <Route path="/tools/finance/tip" element={<TipCalculator />} />
+          <Route path="/tools/finance/split-bill" element={<SplitBillCalculator />} />
+          <Route path="/tools/finance/compound-interest" element={<CompoundInterestCalculator />} />
           <Route path="/tools/admin/qr" element={<QrGenerator />} />
           <Route path="/tools/admin/barcode" element={<BarcodeGenerator />} />
           <Route path="/tools/admin/pdf-merge" element={<PdfMerge />} />
           <Route path="/tools/admin/pdf-split" element={<PdfSplit />} />
           <Route path="/tools/admin/unit-converter" element={<UnitConverter />} />
           <Route path="/tools/admin/date-calc" element={<DateCalculator />} />
+          <Route path="/tools/admin/age" element={<AgeCalculator />} />
+          <Route path="/tools/admin/bmi" element={<BmiCalculator />} />
+          <Route path="/tools/admin/working-days" element={<WorkingDaysCalculator />} />
+          <Route path="/tools/convert" element={<ConversionTool />} />
+          <Route path="/tools/convert/image-pdf" element={<ImageToPdf />} />
+          <Route path="/tools/convert/png-ico" element={<PngToIco />} />
+          <Route path="/tools/convert/pdf-txt" element={<PdfToTxt />} />
+          <Route path="/tools/convert/audio-convert" element={<AudioConvert />} />
+          <Route path="/tools/convert/video-convert" element={<VideoConvert />} />
           <Route path="/tools/hr/leave" element={<LeaveCalculator />} />
           <Route path="/tools/hr/salary-slip" element={<SalarySlipGenerator />} />
           <Route path="/tools/hr/employee-id" element={<EmployeeIdGenerator />} />
@@ -236,6 +262,7 @@ function AppContent() {
           <Route path="/tools/student/reading-time" element={<ReadingTimeCalculator />} />
           <Route path="/tools/student/study-planner" element={<StudyPlanner />} />
           <Route path="/tools/student/note-outline" element={<NoteOutlineGenerator />} />
+          <Route path="/tools/student/gpa" element={<GpaCalculator />} />
           <Route path="/tools/json/formatter" element={<JsonFormatter />} />
           <Route path="/tools/json/validator" element={<JsonValidator />} />
           <Route path="/tools/json/minifier" element={<JsonMinifier />} />
@@ -252,6 +279,7 @@ function AppContent() {
           <Route path="/tools/debug/timestamp" element={<TimestampConverter />} />
           <Route path="/tools/debug/case-converter" element={<CaseConverter />} />
           <Route path="/tools/debug/password" element={<PasswordGenerator />} />
+          <Route path="/tools/debug/password-strength" element={<PasswordStrengthChecker />} />
           <Route path="/tools/debug/color" element={<ColorConverter />} />
           <Route path="/tools/debug/lorem" element={<LoremIpsum />} />
           <Route path="/tools/compare/diff" element={<DiffTool />} />

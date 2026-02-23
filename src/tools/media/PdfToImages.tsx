@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import JSZip from 'jszip';
 import { ToolLayout } from '../../components/ToolLayout';
 
-// PDF.js worker - use CDN for browser compatibility
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// PDF.js worker - use bundled worker (no CDN dependency)
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 type OutputFormat = 'image/png' | 'image/jpeg';
 

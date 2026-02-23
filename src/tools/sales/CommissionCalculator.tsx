@@ -35,17 +35,17 @@ export function CommissionCalculator() {
         {!tiered ? (
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Rate (%)</label>
-            <NumberInput value={rate} onChange={setRate} className="w-full px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] border border-[var(--border)]" />
+            <NumberInput value={rate} onChange={setRate} placeholder="e.g. 2.6 or 10" className="w-full px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] border border-[var(--border)]" />
           </div>
         ) : (
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Tier 1: Up to ₹{tier2Threshold.toLocaleString()} (%)</label>
-              <NumberInput value={tier1} onChange={setTier1} className="w-full px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] border border-[var(--border)]" />
+              <NumberInput value={tier1} onChange={setTier1} placeholder="e.g. 2.6" className="w-full px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] border border-[var(--border)]" />
             </div>
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Tier 2: Above (%)</label>
-              <NumberInput value={tier2} onChange={setTier2} className="w-full px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] border border-[var(--border)]" />
+              <NumberInput value={tier2} onChange={setTier2} placeholder="e.g. 3.9" className="w-full px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] border border-[var(--border)]" />
             </div>
             <div>
               <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Tier 2 threshold (₹)</label>

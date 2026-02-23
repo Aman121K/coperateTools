@@ -13,7 +13,9 @@ export function NumberInput({ value, onChange, ...rest }: NumberInputProps) {
 
   useEffect(() => {
     const next = value === 0 ? '' : String(value);
-    if (next !== str) setStr(next);
+    const parsed = parseFloat(str);
+    const isTypingDecimal = str.endsWith('.') || (str.includes('.') && !isNaN(parsed) && parsed === value);
+    if (next !== str && !isTypingDecimal) setStr(next);
   }, [value, str]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

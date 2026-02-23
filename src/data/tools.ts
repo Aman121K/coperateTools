@@ -10,6 +10,9 @@ export const TOOLS: Tool[] = [
   { id: 'number-to-words', name: 'Number to Words', department: 'finance', category: 'converters', path: '/tools/finance/number-words', icon: '🔢' },
   { id: 'percentage-calc', name: 'Percentage Calculator', department: 'finance', category: 'calculators', path: '/tools/finance/percentage', icon: '%' },
   { id: 'invoice-generator', name: 'Invoice Generator', department: 'finance', category: 'documents', path: '/tools/finance/invoice', icon: '📄' },
+  { id: 'tip-calculator', name: 'Tip Calculator', department: 'finance', category: 'calculators', path: '/tools/finance/tip', icon: '💵' },
+  { id: 'split-bill', name: 'Split Bill Calculator', department: 'finance', category: 'calculators', path: '/tools/finance/split-bill', icon: '🧾' },
+  { id: 'compound-interest', name: 'Compound Interest Calculator', department: 'finance', category: 'calculators', path: '/tools/finance/compound-interest', icon: '📈' },
   // ═══════════════════════════════════════════════════════════
   // ADMIN DEPARTMENT
   // ═══════════════════════════════════════════════════════════
@@ -19,6 +22,10 @@ export const TOOLS: Tool[] = [
   { id: 'pdf-split', name: 'PDF Splitter', department: 'admin', category: 'documents', path: '/tools/admin/pdf-split', icon: '✂' },
   { id: 'unit-converter', name: 'Unit Converter', department: 'admin', category: 'converters', path: '/tools/admin/unit-converter', icon: '📏' },
   { id: 'date-calculator', name: 'Date Calculator', department: 'admin', category: 'calculators', path: '/tools/admin/date-calc', icon: '📅' },
+  { id: 'age-calculator', name: 'Age Calculator', department: 'admin', category: 'calculators', path: '/tools/admin/age', icon: '🎂' },
+  { id: 'bmi-calculator', name: 'BMI Calculator', department: 'admin', category: 'calculators', path: '/tools/admin/bmi', icon: '⚖' },
+  { id: 'working-days', name: 'Working Days Calculator', department: 'admin', category: 'calculators', path: '/tools/admin/working-days', icon: '📆' },
+  { id: 'conversion-tool', name: 'Conversion Tool', department: 'admin', category: 'converters', path: '/tools/convert', icon: '🔄' },
   // ═══════════════════════════════════════════════════════════
   // HR DEPARTMENT
   // ═══════════════════════════════════════════════════════════
@@ -78,6 +85,7 @@ export const TOOLS: Tool[] = [
   { id: 'reading-time', name: 'Reading Time Calculator', department: 'student', category: 'tools', path: '/tools/student/reading-time', icon: '⏱' },
   { id: 'study-planner', name: 'Study Session Planner', department: 'student', category: 'study', path: '/tools/student/study-planner', icon: '📅' },
   { id: 'note-outline', name: 'Note Outline Generator', department: 'student', category: 'study', path: '/tools/student/note-outline', icon: '📋' },
+  { id: 'gpa-calculator', name: 'GPA Calculator', department: 'student', category: 'calculators', path: '/tools/student/gpa', icon: '📊' },
   // ═══════════════════════════════════════════════════════════
   // DEVELOPER DEPARTMENT
   // ═══════════════════════════════════════════════════════════
@@ -98,6 +106,7 @@ export const TOOLS: Tool[] = [
   { id: 'timestamp', name: 'Timestamp Converter', department: 'developer', category: 'debugging', path: '/tools/debug/timestamp', icon: '🕐' },
   { id: 'case-converter', name: 'Case Converter', department: 'developer', category: 'converters', path: '/tools/debug/case-converter', icon: 'Aa' },
   { id: 'password-generator', name: 'Password Generator', department: 'developer', category: 'debugging', path: '/tools/debug/password', icon: '🔑' },
+  { id: 'password-strength', name: 'Password Strength Checker', department: 'developer', category: 'debugging', path: '/tools/debug/password-strength', icon: '🔒' },
   { id: 'color-converter', name: 'Color Converter', department: 'developer', category: 'converters', path: '/tools/debug/color', icon: '🎨' },
   { id: 'lorem-ipsum', name: 'Lorem Ipsum', department: 'developer', category: 'generators', path: '/tools/debug/lorem', icon: '📝' },
   { id: 'curl', name: 'cURL → Fetch/Axios', department: 'developer', category: 'api', path: '/tools/api/curl', icon: '→' },
@@ -112,6 +121,11 @@ export const TOOLS: Tool[] = [
   { id: 'json-flatten', name: 'JSON Flatten/Unflatten', department: 'developer', category: 'formatters', path: '/tools/json/flatten', icon: '↔' },
   { id: 'json-types', name: 'JSON → TypeScript', department: 'developer', category: 'formatters', path: '/tools/json/types', icon: 'TS' },
   { id: 'json-csv', name: 'JSON → CSV', department: 'developer', category: 'converters', path: '/tools/json/csv', icon: '⇄' },
+  { id: 'image-pdf', name: 'Image to PDF', department: 'developer', category: 'media', path: '/tools/convert/image-pdf', icon: '📄' },
+  { id: 'png-ico', name: 'PNG to ICO', department: 'developer', category: 'media', path: '/tools/convert/png-ico', icon: '🖼' },
+  { id: 'pdf-txt', name: 'PDF to TXT', department: 'developer', category: 'media', path: '/tools/convert/pdf-txt', icon: '📝' },
+  { id: 'audio-convert', name: 'Audio Converter (M4A/WAV→MP3)', department: 'developer', category: 'media', path: '/tools/convert/audio-convert', icon: '🎵' },
+  { id: 'video-convert', name: 'Video Converter (MKV/MOV→MP4)', department: 'developer', category: 'media', path: '/tools/convert/video-convert', icon: '🎬' },
 ];
 
 export const DEPARTMENTS = {

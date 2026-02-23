@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PDFDocument, PageSizes, StandardFonts } from 'pdf-lib';
 import { ToolLayout } from '../../components/ToolLayout';
 import { NumberInput } from '../../components/NumberInput';
 import { Editor } from '../../components/Editor';
@@ -19,10 +20,11 @@ export function InvoiceGenerator() {
   };
   const removeItem = (i: number) => setItems(items.filter((_, j) => j !== i));
 
+  const subtotal = items.reduce((s, i) => s + i.qty * i.rate, 0);
+  const tax = subtotal * 0.18;
+  const total = subtotal + tax;
+
   const generate = () => {
-    const subtotal = items.reduce((s, i) => s + i.qty * i.rate, 0);
-    const tax = subtotal * 0.18;
-    const total = subtotal + tax;
     const json = {
       invoiceNo,
       date,
@@ -34,6 +36,63 @@ export function InvoiceGenerator() {
       total,
     };
     setOutput(JSON.stringify(json, null, 2));
+  };
+
+  const downloadPdf = async () => {
+    const doc = await PDFDocument.create();
+    const page = doc.addPage(PageSizes.A4);
+    const font = await doc.embedFont(StandardFonts.Helvetica);
+    const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+
+    const margin = 50;
+    const pageWidth = PageSizes.A4[0];
+    const pageHeight = PageSizes.A4[1];
+    let y = pageHeight - margin;
+
+    page.drawText('INVOICE', { x: margin, y, size: 24, font: fontBold });
+    y -= 30;
+
+    page.drawText(company, { x: margin, y, size: 12, font: fontBold });
+    y -= 16;
+    page.drawText(`Invoice #: ${invoiceNo}`, { x: margin, y, size: 10, font: font });
+    y -= 12;
+    page.drawText(`Date: ${date}`, { x: margin, y, size: 10, font: font });
+    y -= 24;
+
+    page.drawText('Bill To:', { x: margin, y, size: 10, font: fontBold });
+    y -= 12;
+    page.drawText(client, { x: margin, y, size: 10, font: font });
+    y -= 24;
+
+    page.drawText('Item', { x: margin, y, size: 10, font: fontBold });
+    page.drawText('Qty', { x: pageWidth - margin - 180, y, size: 10, font: fontBold });
+    page.drawText('Rate', { x: pageWidth - margin - 120, y, size: 10, font: fontBold });
+    page.drawText('Amount', { x: pageWidth - margin - 60, y, size: 10, font: fontBold });
+    y -= 16;
+
+    items.forEach((item) => {
+      const amount = item.qty * item.rate;
+      page.drawText(item.name || '—', { x: margin, y, size: 10, font: font });
+      page.drawText(String(item.qty), { x: pageWidth - margin - 180, y, size: 10, font: font });
+      page.drawText(item.rate.toFixed(2), { x: pageWidth - margin - 120, y, size: 10, font: font });
+      page.drawText(amount.toFixed(2), { x: pageWidth - margin - 60, y, size: 10, font: font });
+      y -= 14;
+    });
+
+    y -= 8;
+    page.drawText(`Subtotal: ${subtotal.toFixed(2)}`, { x: pageWidth - margin - 120, y, size: 10, font: font });
+    y -= 12;
+    page.drawText(`Tax (18%): ${tax.toFixed(2)}`, { x: pageWidth - margin - 120, y, size: 10, font: font });
+    y -= 12;
+    page.drawText(`Total: ${total.toFixed(2)}`, { x: pageWidth - margin - 120, y, size: 12, font: fontBold });
+
+    const pdfBytes = await doc.save();
+    const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `invoice-${invoiceNo}.pdf`;
+    a.click();
+    URL.revokeObjectURL(a.href);
   };
 
   return (
@@ -75,7 +134,18 @@ export function InvoiceGenerator() {
             ))}
           </div>
         </div>
-        <button type="button" onClick={generate} className="px-5 py-2.5 rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-medium">Generate</button>
+        <div className="flex gap-3">
+          <button type="button" onClick={generate} className="px-5 py-2.5 rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-medium">
+            Generate
+          </button>
+          <button
+            type="button"
+            onClick={downloadPdf}
+            className="px-5 py-2.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:bg-[var(--border)] text-[var(--text-primary)] font-medium"
+          >
+            Download PDF (A4)
+          </button>
+        </div>
         {output && (
           <Editor value={output} onChange={() => {}} language="json" height="256px" readOnly />
         )}
