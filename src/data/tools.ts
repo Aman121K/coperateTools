@@ -87,6 +87,15 @@ export const TOOLS: Tool[] = [
   { id: 'note-outline', name: 'Note Outline Generator', department: 'student', category: 'study', path: '/tools/student/note-outline', icon: '📋' },
   { id: 'gpa-calculator', name: 'GPA Calculator', department: 'student', category: 'calculators', path: '/tools/student/gpa', icon: '📊' },
   // ═══════════════════════════════════════════════════════════
+  // FREELANCER / GIG WORKER
+  // ═══════════════════════════════════════════════════════════
+  { id: 'platform-fee-calc', name: 'Platform Fee Calculator', department: 'freelancer', category: 'calculators', path: '/tools/freelancer/platform-fee', icon: '📊' },
+  { id: 'project-rate-calc', name: 'Project Rate Calculator', department: 'freelancer', category: 'calculators', path: '/tools/freelancer/project-rate', icon: '⏱' },
+  { id: 'timesheet-generator', name: 'Timesheet Generator', department: 'freelancer', category: 'documents', path: '/tools/freelancer/timesheet', icon: '📋' },
+  { id: 'receipt-generator', name: 'Receipt Generator', department: 'freelancer', category: 'documents', path: '/tools/freelancer/receipt', icon: '🧾' },
+  { id: 'mileage-calculator', name: 'Mileage Calculator', department: 'freelancer', category: 'calculators', path: '/tools/freelancer/mileage', icon: '🚗' },
+  { id: 'self-employment-tax', name: 'Self-Employment Tax Estimator', department: 'freelancer', category: 'calculators', path: '/tools/freelancer/self-employment-tax', icon: '📑' },
+  // ═══════════════════════════════════════════════════════════
   // DEVELOPER DEPARTMENT
   // ═══════════════════════════════════════════════════════════
   { id: 'json-formatter', name: 'JSON Formatter', department: 'developer', category: 'formatters', path: '/tools/json/formatter', icon: '{}' },
@@ -143,6 +152,7 @@ export const DEPARTMENTS = {
   procurement: 'Procurement',
   qa: 'Quality Assurance',
   student: 'Student',
+  freelancer: 'Freelancer & Gig Worker',
   developer: 'Developer',
   general: 'General',
 } as const;

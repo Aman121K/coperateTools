@@ -1,4 +1,4 @@
-export type Department = 'finance' | 'admin' | 'hr' | 'developer' | 'legal' | 'marketing' | 'sales' | 'support' | 'operations' | 'procurement' | 'qa' | 'student' | 'general';
+export type Department = 'finance' | 'admin' | 'hr' | 'developer' | 'legal' | 'marketing' | 'sales' | 'support' | 'operations' | 'procurement' | 'qa' | 'student' | 'freelancer' | 'general';
 
 export interface Tool {
   id: string;

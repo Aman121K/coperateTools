@@ -74,6 +74,11 @@ export const DEPARTMENTS_WITH_ROLES: Record<Department, Role[]> = {
     { id: 'fullstack', name: 'Full-Stack Developer', department: 'developer', icon: '🔄' },
     { id: 'devops', name: 'DevOps Engineer', department: 'developer', icon: '🔧' },
   ],
+  freelancer: [
+    { id: 'freelancer', name: 'Freelancer', department: 'freelancer', icon: '💼' },
+    { id: 'gig-worker', name: 'Gig Worker', department: 'freelancer', icon: '🚗' },
+    { id: 'contractor', name: 'Contractor', department: 'freelancer', icon: '📋' },
+  ],
   general: [
     { id: 'general', name: 'General User (all tools)', department: 'general', icon: '👤' },
   ],

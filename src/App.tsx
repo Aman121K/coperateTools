@@ -137,6 +137,12 @@ import { ReadingTimeCalculator } from './tools/student/ReadingTimeCalculator';
 import { StudyPlanner } from './tools/student/StudyPlanner';
 import { NoteOutlineGenerator } from './tools/student/NoteOutlineGenerator';
 import { GpaCalculator } from './tools/student/GpaCalculator';
+import { PlatformFeeCalculator } from './tools/freelancer/PlatformFeeCalculator';
+import { ProjectRateCalculator } from './tools/freelancer/ProjectRateCalculator';
+import { TimesheetGenerator } from './tools/freelancer/TimesheetGenerator';
+import { ReceiptGenerator } from './tools/freelancer/ReceiptGenerator';
+import { MileageCalculator } from './tools/freelancer/MileageCalculator';
+import { SelfEmploymentTaxEstimator } from './tools/freelancer/SelfEmploymentTaxEstimator';
 
 function AppContent() {
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -267,6 +273,12 @@ function AppContent() {
           <Route path="/tools/student/study-planner" element={<StudyPlanner />} />
           <Route path="/tools/student/note-outline" element={<NoteOutlineGenerator />} />
           <Route path="/tools/student/gpa" element={<GpaCalculator />} />
+          <Route path="/tools/freelancer/platform-fee" element={<PlatformFeeCalculator />} />
+          <Route path="/tools/freelancer/project-rate" element={<ProjectRateCalculator />} />
+          <Route path="/tools/freelancer/timesheet" element={<TimesheetGenerator />} />
+          <Route path="/tools/freelancer/receipt" element={<ReceiptGenerator />} />
+          <Route path="/tools/freelancer/mileage" element={<MileageCalculator />} />
+          <Route path="/tools/freelancer/self-employment-tax" element={<SelfEmploymentTaxEstimator />} />
           <Route path="/tools/json/formatter" element={<JsonFormatter />} />
           <Route path="/tools/json/validator" element={<JsonValidator />} />
           <Route path="/tools/json/minifier" element={<JsonMinifier />} />
