@@ -25,19 +25,10 @@ export function DepartmentRolePage() {
     }
   };
 
-  const toolCount = dept && roleId
-    ? dept === 'general'
-      ? TOOLS.length
-      : TOOLS.filter((t) => {
-          if (t.department !== dept) return false;
-          if (!t.roles || t.roles.length === 0) return true;
-          return t.roles.includes(roleId);
-        }).length
-    : 0;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-primary)] p-6">
-      <div className="w-full max-w-lg rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-8 shadow-xl">
+      <div className="w-full max-w-lg rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-8 shadow-2xl shadow-black/20">
         <div className="flex items-center gap-3 mb-6">
           {user?.photoURL && (
             <img src={user.photoURL} alt="" className="w-12 h-12 rounded-full" />
@@ -46,14 +37,30 @@ export function DepartmentRolePage() {
             <h1 className="text-xl font-bold text-[var(--text-primary)]">
               Welcome, {user?.displayName || user?.email || 'User'}
             </h1>
-            <p className="text-sm text-[var(--text-muted)]">Select your department and role</p>
+            <p className="text-sm text-[var(--text-muted)]">Choose your area to see relevant tools, or browse all</p>
           </div>
         </div>
 
         <div className="space-y-6">
+          <button
+            type="button"
+            onClick={() => {
+              setDept('general');
+              setRoleId('general');
+            }}
+            className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-medium transition-all ${
+              dept === 'general'
+                ? 'bg-[var(--accent)] text-white'
+                : 'bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)]'
+            }`}
+          >
+            <span>📂</span>
+            <span>Browse all tools ({TOOLS.length}+)</span>
+          </button>
+
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-              Department
+              Or pick a department
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {deptList.map((d) => (
@@ -104,7 +111,7 @@ export function DepartmentRolePage() {
 
         {dept && roleId && (
           <p className="mt-4 text-sm text-[var(--text-muted)]">
-            You’ll have access to <strong>{toolCount}</strong> tools for your role.
+            You’ll have access to <strong>all {TOOLS.length}+ tools</strong> — your selection helps us personalize your experience.
           </p>
         )}
 

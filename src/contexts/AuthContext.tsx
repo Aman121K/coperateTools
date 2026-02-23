@@ -92,9 +92,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser({
       uid: 'demo-user',
       email: 'demo@devtool.local',
-      displayName: 'Demo User',
+      displayName: 'Guest',
       photoURL: null,
     });
+    setProfileState({ department: 'general', roleId: 'general' });
+    localStorage.setItem(PROFILE_KEY, JSON.stringify({ department: 'general', roleId: 'general' }));
     setIsDemo(true);
   };
 

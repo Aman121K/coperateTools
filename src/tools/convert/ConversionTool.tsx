@@ -107,9 +107,11 @@ export function ConversionTool() {
       showCopyMinified={false}
     >
       <div className="space-y-8 max-w-5xl">
-        <p className="text-sm text-[var(--text-muted)]">
-          Select a conversion below. Available tools run in your browser — no upload to external servers.
-        </p>
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 px-4 py-3">
+          <p className="text-sm text-[var(--text-secondary)]">
+            Choose a conversion below. All tools run in your browser — your files never leave your device.
+          </p>
+        </div>
         <ConversionSection title="Document Conversions" items={DOCUMENT_CONVERSIONS} />
         <ConversionSection title="Image Conversions" items={IMAGE_CONVERSIONS} />
         <ConversionSection title="Image Editing (Transparency)" items={IMAGE_EDITING} />

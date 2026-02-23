@@ -170,7 +170,7 @@ function AppContent() {
               <button
                 type="button"
                 onClick={() => setSidebarOpen((o) => !o)}
-                className="md:hidden p-2 rounded-[var(--radius-sm)] hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)]"
+                className="md:hidden p-2.5 rounded-[var(--radius-sm)] hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] transition-colors"
                 aria-label="Toggle menu"
               >
                 <span className="text-xl">{sidebarOpen ? '✕' : '☰'}</span>
@@ -180,17 +180,18 @@ function AppContent() {
                 <button
                   type="button"
                   onClick={() => setPaletteOpen(true)}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:border-[var(--accent)]/30"
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:border-[var(--accent)]/30 transition-colors"
                 >
                   <span>🔍</span>
-                  <span className="hidden sm:inline">Search</span>
-                  <kbd className="hidden sm:inline px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[10px] font-mono">⌘K</kbd>
+                  <span className="hidden sm:inline">Search tools</span>
+                  <kbd className="hidden sm:inline px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[10px] font-mono text-[var(--text-muted)]">⌘K</kbd>
                 </button>
                 <button
                   type="button"
                   onClick={toggle}
-                  className="px-3 py-2 text-sm rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:bg-[var(--bg-secondary)] transition-colors"
+                  className="p-2.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:bg-[var(--bg-secondary)] transition-colors"
                   title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                  aria-label={theme === 'dark' ? 'Light mode' : 'Dark mode'}
                 >
                   {theme === 'dark' ? '☀️' : '🌙'}
                 </button>

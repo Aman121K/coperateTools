@@ -21,19 +21,17 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   return (
     <aside className="w-64 min-w-64 h-full bg-[var(--bg-secondary)] border-r border-[var(--border)] flex flex-col overflow-hidden">
       <div className="p-3 sm:p-4 border-b border-[var(--border)] shrink-0">
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="" className="h-8 w-8 object-contain shrink-0" />
-          <h1 className="text-base sm:text-lg font-bold text-[var(--accent)] tracking-tight">Corporate Tools</h1>
-        </div>
+        <img src="/logo.png" alt="Corporate Tools" className="h-14 w-14 sm:h-16 sm:w-16 object-contain shrink-0" />
         <button
           type="button"
-          className="mt-1.5 flex items-center gap-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          className="mt-2 flex items-center gap-2 w-full px-3 py-2.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--accent-muted)] hover:border-[var(--accent)]/30 border border-[var(--border)] transition-colors text-left"
           onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
         >
-          <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-tertiary)] border border-[var(--border)] font-mono text-[10px]">
+          <span className="text-[var(--text-muted)]">🔍</span>
+          <span className="flex-1 text-sm text-[var(--text-secondary)]">Search tools...</span>
+          <kbd className="hidden sm:inline px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] border border-[var(--border)] font-mono text-[10px] text-[var(--text-muted)]">
             ⌘K
           </kbd>
-          <span>Search tools</span>
         </button>
         {user && (
           <div className="mt-2 pt-2 border-t border-[var(--border)] flex items-center gap-2">
@@ -79,7 +77,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                       `flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
                         isActive
                           ? 'bg-[var(--accent-muted)] text-[var(--accent)] border border-[var(--accent)]/30'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent hover:border-[var(--border)]'
                       }`
                     }
                   >

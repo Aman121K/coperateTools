@@ -125,29 +125,37 @@ export function ToolLayout({
         <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
           <button
             onClick={handleCopy}
-            className="px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)]"
+            title="Copy to clipboard"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
           >
-            Copy
+            <span>📋</span>
+            <span className="hidden sm:inline">Copy</span>
           </button>
           {showCopyMinified && hasJsonOutput() && (
             <button
               onClick={handleCopyMinified}
-              className="px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)]"
+              title="Copy minified JSON"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
             >
-              Copy Minified
+              <span>⌫</span>
+              <span className="hidden sm:inline">Minify</span>
             </button>
           )}
           <button
             onClick={() => handleDownload('output.json', output || input, 'application/json')}
-            className="px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)]"
+            title="Download"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
           >
-            Download
+            <span>⬇</span>
+            <span className="hidden sm:inline">Download</span>
           </button>
           <button
             onClick={handleShare}
-            className="px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--accent)] hover:opacity-90 text-white"
+            title="Share link"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition-colors"
           >
-            Share
+            <span>↗</span>
+            <span className="hidden sm:inline">Share</span>
           </button>
           {actions}
         </div>
