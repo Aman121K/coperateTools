@@ -36,6 +36,12 @@ const IMAGE_CONVERSIONS: ConversionItem[] = [
   { id: 'png-ico', label: 'PNG to ICO', path: '/tools/convert/png-ico', status: 'available' },
 ];
 
+const IMAGE_EDITING: ConversionItem[] = [
+  { id: 'remove-bg', label: 'Remove Background', path: '/tools/media/remove-bg', status: 'available' },
+  { id: 'make-transparent', label: 'Make Color Transparent', path: '/tools/media/make-transparent', status: 'available' },
+  { id: 'replace-bg', label: 'Replace Background', path: '/tools/media/replace-bg', status: 'available' },
+];
+
 const AUDIO_VIDEO_CONVERSIONS: ConversionItem[] = [
   { id: 'mp4-mp3', label: 'MP4 to MP3', path: '/tools/media/mp4-mp3', status: 'available' },
   { id: 'mp3-mp4', label: 'MP3 to MP4', path: '/tools/media/mp3-mp4', status: 'available' },
@@ -106,6 +112,7 @@ export function ConversionTool() {
         </p>
         <ConversionSection title="Document Conversions" items={DOCUMENT_CONVERSIONS} />
         <ConversionSection title="Image Conversions" items={IMAGE_CONVERSIONS} />
+        <ConversionSection title="Image Editing (Transparency)" items={IMAGE_EDITING} />
         <ConversionSection title="Audio / Video Conversions" items={AUDIO_VIDEO_CONVERSIONS} />
       </div>
     </ToolLayout>

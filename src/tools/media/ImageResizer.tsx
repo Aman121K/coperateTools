@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import Cropper from 'react-easy-crop';
 import type { Area } from 'react-easy-crop';
+import 'react-easy-crop/react-easy-crop.css';
 import { ToolLayout } from '../../components/ToolLayout';
 
 type OutputFormat = 'image/jpeg' | 'image/png' | 'image/webp';
@@ -94,7 +95,7 @@ export function ImageResizer() {
     URL.revokeObjectURL(a.href);
   };
 
-  const aspect = aspectRatio && !Number.isNaN(parseFloat(aspectRatio)) ? parseFloat(aspectRatio) : undefined;
+  const aspect = aspectRatio && !Number.isNaN(parseFloat(aspectRatio)) ? parseFloat(aspectRatio) : 4 / 3;
 
   const handleRestoreFromShare = useCallback((data: Record<string, unknown>) => {
     if (typeof data.aspectRatio === 'string') setAspectRatio(data.aspectRatio);
@@ -197,12 +198,13 @@ export function ImageResizer() {
               </div>
             </div>
 
-            <div className="relative h-[400px] rounded-[var(--radius)] overflow-hidden bg-[var(--bg-tertiary)] border border-[var(--border)]">
+            <div className="relative w-full min-w-0 h-[400px] rounded-[var(--radius)] overflow-hidden bg-[var(--bg-tertiary)] border border-[var(--border)]">
               <Cropper
                 image={src}
                 crop={crop}
                 zoom={zoom}
                 aspect={aspect}
+                objectFit="cover"
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}

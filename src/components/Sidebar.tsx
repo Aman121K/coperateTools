@@ -21,7 +21,10 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   return (
     <aside className="w-64 min-w-64 h-full bg-[var(--bg-secondary)] border-r border-[var(--border)] flex flex-col overflow-hidden">
       <div className="p-3 sm:p-4 border-b border-[var(--border)] shrink-0">
-        <h1 className="text-base sm:text-lg font-bold text-[var(--accent)] tracking-tight">Corporate Tools</h1>
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="" className="h-8 w-8 object-contain shrink-0" />
+          <h1 className="text-base sm:text-lg font-bold text-[var(--accent)] tracking-tight">Corporate Tools</h1>
+        </div>
         <button
           type="button"
           className="mt-1.5 flex items-center gap-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"

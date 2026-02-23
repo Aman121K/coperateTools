@@ -47,6 +47,9 @@ import { DummyVideos } from './tools/data/DummyVideos';
 // Media
 import { ImageCompressor } from './tools/media/ImageCompressor';
 import { ImageResizer } from './tools/media/ImageResizer';
+import { RemoveBackground } from './tools/media/RemoveBackground';
+import { MakeColorTransparent } from './tools/media/MakeColorTransparent';
+import { ReplaceBackground } from './tools/media/ReplaceBackground';
 import { PdfToImages } from './tools/media/PdfToImages';
 import { Mp4ToMp3 } from './tools/media/Mp4ToMp3';
 import { Mp3ToMp4 } from './tools/media/Mp3ToMp4';
@@ -289,6 +292,9 @@ function AppContent() {
           <Route path="/tools/data/videos" element={<DummyVideos />} />
           <Route path="/tools/media/compressor" element={<ImageCompressor />} />
           <Route path="/tools/media/resizer" element={<ImageResizer />} />
+          <Route path="/tools/media/remove-bg" element={<RemoveBackground />} />
+          <Route path="/tools/media/make-transparent" element={<MakeColorTransparent />} />
+          <Route path="/tools/media/replace-bg" element={<ReplaceBackground />} />
           <Route path="/tools/media/pdf-images" element={<PdfToImages />} />
           <Route path="/tools/media/mp4-mp3" element={<Mp4ToMp3 />} />
           <Route path="/tools/media/mp3-mp4" element={<Mp3ToMp4 />} />

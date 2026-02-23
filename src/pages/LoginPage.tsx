@@ -44,9 +44,12 @@ export function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-primary)] p-6">
       <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)] text-center mb-2">
-          Corporate Tools Hub
-        </h1>
+        <div className="flex flex-col items-center mb-6">
+          <img src="/logo.png" alt="Corporate Tools" className="h-16 w-16 object-contain mb-4" />
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] text-center">
+            Corporate Tools Hub
+          </h1>
+        </div>
         <p className="text-sm text-[var(--text-muted)] text-center mb-8">
           Sign in to access tools for your department and role
         </p>
