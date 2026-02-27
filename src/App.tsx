@@ -88,6 +88,12 @@ import { PdfToTxt } from './tools/convert/PdfToTxt';
 import { AudioConvert } from './tools/convert/AudioConvert';
 import { VideoConvert } from './tools/convert/VideoConvert';
 
+// Slips
+import { RentSlipGenerator } from './tools/slips/RentSlipGenerator';
+import { CashReceiptSlip } from './tools/slips/CashReceiptSlip';
+import { SalaryAdvanceSlip } from './tools/slips/SalaryAdvanceSlip';
+import { SecurityDepositSlip } from './tools/slips/SecurityDepositSlip';
+
 // HR
 import { LeaveCalculator } from './tools/hr/LeaveCalculator';
 import { SalarySlipGenerator } from './tools/hr/SalarySlipGenerator';
@@ -246,6 +252,10 @@ function AppContent() {
           <Route path="/tools/convert/pdf-txt" element={<PdfToTxt />} />
           <Route path="/tools/convert/audio-convert" element={<AudioConvert />} />
           <Route path="/tools/convert/video-convert" element={<VideoConvert />} />
+          <Route path="/tools/slips/rent" element={<RentSlipGenerator />} />
+          <Route path="/tools/slips/cash-receipt" element={<CashReceiptSlip />} />
+          <Route path="/tools/slips/salary-advance" element={<SalaryAdvanceSlip />} />
+          <Route path="/tools/slips/security-deposit" element={<SecurityDepositSlip />} />
           <Route path="/tools/hr/leave" element={<LeaveCalculator />} />
           <Route path="/tools/hr/salary-slip" element={<SalarySlipGenerator />} />
           <Route path="/tools/hr/employee-id" element={<EmployeeIdGenerator />} />

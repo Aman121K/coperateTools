@@ -28,6 +28,13 @@ export const TOOLS: Tool[] = [
   { id: 'working-days', name: 'Working Days Calculator', department: 'admin', category: 'calculators', path: '/tools/admin/working-days', icon: '📆' },
   { id: 'conversion-tool', name: 'Conversion Tool', department: 'admin', category: 'converters', path: '/tools/convert', icon: '🔄' },
   // ═══════════════════════════════════════════════════════════
+  // SLIPS
+  // ═══════════════════════════════════════════════════════════
+  { id: 'rent-slip', name: 'Rent Slip Generator', department: 'slips', category: 'documents', path: '/tools/slips/rent', icon: '🏠' },
+  { id: 'cash-receipt-slip', name: 'Cash Receipt Slip', department: 'slips', category: 'documents', path: '/tools/slips/cash-receipt', icon: '💵' },
+  { id: 'salary-advance-slip', name: 'Salary Advance Slip', department: 'slips', category: 'documents', path: '/tools/slips/salary-advance', icon: '👔' },
+  { id: 'security-deposit-slip', name: 'Security Deposit Slip', department: 'slips', category: 'documents', path: '/tools/slips/security-deposit', icon: '🔐' },
+  // ═══════════════════════════════════════════════════════════
   // HR DEPARTMENT
   // ═══════════════════════════════════════════════════════════
   { id: 'leave-calculator', name: 'Leave Calculator', department: 'hr', category: 'calculators', path: '/tools/hr/leave', icon: '🏖' },
@@ -154,6 +161,7 @@ export const DEPARTMENTS = {
   qa: 'Quality Assurance',
   student: 'Student',
   freelancer: 'Freelancer & Gig Worker',
+  slips: 'Slips',
   developer: 'Developer',
   general: 'General',
 } as const;

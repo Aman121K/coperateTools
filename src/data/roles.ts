@@ -79,6 +79,11 @@ export const DEPARTMENTS_WITH_ROLES: Record<Department, Role[]> = {
     { id: 'gig-worker', name: 'Gig Worker', department: 'freelancer', icon: '🚗' },
     { id: 'contractor', name: 'Contractor', department: 'freelancer', icon: '📋' },
   ],
+  slips: [
+    { id: 'property-manager', name: 'Property Manager', department: 'slips', icon: '🏠' },
+    { id: 'account-assistant', name: 'Accounts Assistant', department: 'slips', icon: '🧾' },
+    { id: 'daily-ops', name: 'Daily Operations', department: 'slips', icon: '📒' },
+  ],
   general: [
     { id: 'general', name: 'General User (all tools)', department: 'general', icon: '👤' },
   ],
