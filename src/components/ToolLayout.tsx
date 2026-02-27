@@ -214,7 +214,9 @@ export function ToolLayout({
 
       <div className="flex-1 min-h-0 flex flex-col p-4 sm:p-6">
         {children ? (
-          children
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
+            {children}
+          </div>
         ) : singlePanel ? (
           <div className="flex-1 min-h-0 flex flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
             <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">{inputLabel}</label>
