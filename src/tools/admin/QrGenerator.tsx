@@ -6,6 +6,7 @@ import { readTextFromClipboard } from '../../utils/clipboard';
 
 const SIZE_PRESETS = [200, 256, 500, 512, 1000, 1024];
 type QrFormat = 'png' | 'jpg' | 'webp' | 'svg';
+type FrameStyle = 'none' | 'rounded' | 'double' | 'circle';
 const PREVIEW_SIZE = 320;
 
 function sanitizeFileName(name: string): string {
@@ -62,6 +63,70 @@ async function drawCenterLogo(canvas: HTMLCanvasElement, logoDataUrl: string, lo
   ctx.drawImage(logo, x, y, logoSize, logoSize);
 }
 
+function drawFrame(canvas: HTMLCanvasElement, frameStyle: FrameStyle, frameColor: string): void {
+  if (frameStyle === 'none') return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const size = canvas.width;
+  const pad = Math.max(8, Math.round(size * 0.03));
+
+  ctx.save();
+  ctx.strokeStyle = frameColor;
+
+  if (frameStyle === 'rounded') {
+    const radius = Math.max(14, Math.round(size * 0.08));
+    ctx.lineWidth = Math.max(8, Math.round(size * 0.035));
+    ctx.beginPath();
+    ctx.moveTo(pad + radius, pad);
+    ctx.lineTo(size - pad - radius, pad);
+    ctx.quadraticCurveTo(size - pad, pad, size - pad, pad + radius);
+    ctx.lineTo(size - pad, size - pad - radius);
+    ctx.quadraticCurveTo(size - pad, size - pad, size - pad - radius, size - pad);
+    ctx.lineTo(pad + radius, size - pad);
+    ctx.quadraticCurveTo(pad, size - pad, pad, size - pad - radius);
+    ctx.lineTo(pad, pad + radius);
+    ctx.quadraticCurveTo(pad, pad, pad + radius, pad);
+    ctx.closePath();
+    ctx.stroke();
+  } else if (frameStyle === 'double') {
+    const outer = Math.max(8, Math.round(size * 0.025));
+    const inner = Math.max(5, Math.round(size * 0.015));
+    ctx.lineWidth = outer;
+    ctx.strokeRect(pad, pad, size - pad * 2, size - pad * 2);
+    const secondPad = pad + outer + Math.max(6, Math.round(size * 0.015));
+    ctx.lineWidth = inner;
+    ctx.strokeRect(secondPad, secondPad, size - secondPad * 2, size - secondPad * 2);
+  } else if (frameStyle === 'circle') {
+    const radius = (size / 2) - pad;
+    ctx.lineWidth = Math.max(8, Math.round(size * 0.03));
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, radius, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function frameLayerSvg(size: number, frameStyle: FrameStyle, frameColor: string): string {
+  if (frameStyle === 'none') return '';
+  const pad = Math.max(8, Math.round(size * 0.03));
+
+  if (frameStyle === 'rounded') {
+    const radius = Math.max(14, Math.round(size * 0.08));
+    const stroke = Math.max(8, Math.round(size * 0.035));
+    return `<rect x="${pad}" y="${pad}" width="${size - pad * 2}" height="${size - pad * 2}" rx="${radius}" ry="${radius}" fill="none" stroke="${frameColor}" stroke-width="${stroke}"/>`;
+  }
+  if (frameStyle === 'double') {
+    const outer = Math.max(8, Math.round(size * 0.025));
+    const inner = Math.max(5, Math.round(size * 0.015));
+    const secondPad = pad + outer + Math.max(6, Math.round(size * 0.015));
+    return `<rect x="${pad}" y="${pad}" width="${size - pad * 2}" height="${size - pad * 2}" fill="none" stroke="${frameColor}" stroke-width="${outer}"/><rect x="${secondPad}" y="${secondPad}" width="${size - secondPad * 2}" height="${size - secondPad * 2}" fill="none" stroke="${frameColor}" stroke-width="${inner}"/>`;
+  }
+  const stroke = Math.max(8, Math.round(size * 0.03));
+  const radius = (size / 2) - pad;
+  return `<circle cx="${size / 2}" cy="${size / 2}" r="${radius}" fill="none" stroke="${frameColor}" stroke-width="${stroke}"/>`;
+}
+
 export function QrGenerator() {
   const [text, setText] = useState('https://example.com');
   const [url, setUrl] = useState('');
@@ -72,6 +137,8 @@ export function QrGenerator() {
   const [fileName, setFileName] = useState('qrcode');
   const [logoDataUrl, setLogoDataUrl] = useState('');
   const [logoScale, setLogoScale] = useState(0.2);
+  const [frameStyle, setFrameStyle] = useState<FrameStyle>('none');
+  const [frameColor, setFrameColor] = useState('#111827');
 
   useEffect(() => {
     let cancelled = false;
@@ -86,6 +153,7 @@ export function QrGenerator() {
         if (logoDataUrl) {
           await drawCenterLogo(canvas, logoDataUrl, logoScale);
         }
+        drawFrame(canvas, frameStyle, frameColor);
         if (!cancelled) setUrl(canvas.toDataURL('image/png'));
       } catch (err: unknown) {
         if (!cancelled) setError((err as Error).message);
@@ -94,7 +162,7 @@ export function QrGenerator() {
     return () => {
       cancelled = true;
     };
-  }, [text, logoDataUrl, logoScale]);
+  }, [text, logoDataUrl, logoScale, frameStyle, frameColor]);
 
   const download = async () => {
     if (!text.trim()) return;
@@ -120,6 +188,8 @@ export function QrGenerator() {
         const logoLayer = `<rect x="${x - padding}" y="${y - padding}" width="${logoSize + padding * 2}" height="${logoSize + padding * 2}" rx="${radius}" ry="${radius}" fill="#ffffff"/><image href="${logoDataUrl}" x="${x}" y="${y}" width="${logoSize}" height="${logoSize}" preserveAspectRatio="xMidYMid meet"/>`;
         svg = svg.replace('</svg>', `${logoLayer}</svg>`);
       }
+      const frameLayer = frameLayerSvg(normalizedSize, frameStyle, frameColor);
+      if (frameLayer) svg = svg.replace('</svg>', `${frameLayer}</svg>`);
       const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
       href = URL.createObjectURL(blob);
       revokeAfter = true;
@@ -134,6 +204,7 @@ export function QrGenerator() {
       if (logoDataUrl) {
         await drawCenterLogo(canvas, logoDataUrl, logoScale);
       }
+      drawFrame(canvas, frameStyle, frameColor);
       href = canvas.toDataURL(mime, format === 'png' ? undefined : 0.92);
       extension = format === 'jpg' ? 'jpeg' : format;
     }
@@ -209,13 +280,22 @@ export function QrGenerator() {
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">File name</label>
-            <input
-              type="text"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
-              placeholder="qrcode"
-              className="w-full px-3 py-2.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] text-[var(--text-primary)]"
-            />
+            <div className="space-y-2">
+              <input
+                type="text"
+                value={fileName}
+                onChange={(e) => setFileName(e.target.value)}
+                placeholder="qrcode"
+                className="w-full px-3 py-2.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] text-[var(--text-primary)]"
+              />
+              <button
+                type="button"
+                onClick={() => setText(fileName || 'qrcode')}
+                className="w-full px-3 py-2 rounded-[var(--radius-sm)] text-xs bg-[var(--bg-tertiary)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)]"
+              >
+                Use file name as QR text
+              </button>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Custom size (px)</label>
@@ -266,6 +346,30 @@ export function QrGenerator() {
               className="w-full"
             />
             <p className="mt-2 text-xs text-[var(--text-muted)]">Recommended: 15% to 25% for better scan reliability.</p>
+          </div>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Frame style</label>
+            <select
+              value={frameStyle}
+              onChange={(e) => setFrameStyle(e.target.value as FrameStyle)}
+              className="w-full px-3 py-2.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] text-[var(--text-primary)]"
+            >
+              <option value="none">No frame</option>
+              <option value="rounded">Rounded frame</option>
+              <option value="double">Double frame</option>
+              <option value="circle">Circle frame</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Frame color</label>
+            <input
+              type="color"
+              value={frameColor}
+              onChange={(e) => setFrameColor(e.target.value)}
+              className="h-11 w-full rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)]"
+            />
           </div>
         </div>
         <div>
