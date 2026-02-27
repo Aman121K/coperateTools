@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import { ToolLayout } from '../../components/ToolLayout';
 import { Editor } from '../../components/Editor';
+import { readTextFromClipboard } from '../../utils/clipboard';
 
 export function QrGenerator() {
   const [text, setText] = useState('https://example.com');
@@ -9,6 +10,7 @@ export function QrGenerator() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    setError('');
     if (!text.trim()) {
       setUrl('');
       return;
@@ -23,7 +25,23 @@ export function QrGenerator() {
     const a = document.createElement('a');
     a.href = url;
     a.download = 'qrcode.png';
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
+  };
+
+  const pasteFromClipboard = async () => {
+    try {
+      const clipboardText = await readTextFromClipboard();
+      if (!clipboardText) {
+        setError('Clipboard is empty.');
+        return;
+      }
+      setText(clipboardText);
+      setError('');
+    } catch {
+      setError('Unable to read clipboard. Please paste with keyboard.');
+    }
   };
 
   return (
@@ -32,6 +50,15 @@ export function QrGenerator() {
         <div>
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Text or URL</label>
           <Editor value={text} onChange={setText} language="plaintext" height="80px" />
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={pasteFromClipboard}
+              className="px-4 py-2 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text-primary)]"
+            >
+              Paste from Clipboard
+            </button>
+          </div>
           {error && <p className="mt-2 text-sm text-[var(--error)]">⚠ {error}</p>}
         </div>
         {url && (

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { writeTextToClipboard } from '../utils/clipboard';
 
 const SHARE_PREFIX = 'share=';
 
@@ -34,9 +35,9 @@ export function useShareLink(toolId: string) {
   );
 
   const copyShareLink = useCallback(
-    (data: object) => {
+    async (data: object) => {
       const url = getShareUrl(data);
-      navigator.clipboard.writeText(url);
+      await writeTextToClipboard(url);
       return url;
     },
     [getShareUrl]

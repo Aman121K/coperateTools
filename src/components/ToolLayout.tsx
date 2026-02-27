@@ -5,6 +5,7 @@ import { Editor } from './Editor';
 import { useHistory } from '../hooks/useHistory';
 import { Toast } from './Toast';
 import { useShareLink } from '../hooks/useShareLink';
+import { writeTextToClipboard, readTextFromClipboard } from '../utils/clipboard';
 
 interface ToolLayoutProps {
   title: string;
@@ -66,30 +67,52 @@ export function ToolLayout({
     setToast(msg);
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     const text = output || input;
     if (text) {
-      navigator.clipboard.writeText(text);
-      add({ toolId, input, output: text });
-      showToast('Copied to clipboard!');
+      const copied = await writeTextToClipboard(text);
+      if (copied) {
+        add({ toolId, input, output: text });
+        showToast('Copied to clipboard!');
+      } else {
+        showToast('Unable to copy. Please use keyboard copy.');
+      }
     }
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const data = shareData ?? { input, output };
-    copyShareLink(data);
-    showToast('Share link copied! Send to anyone to open the same state.');
+    try {
+      await copyShareLink(data);
+      showToast('Share link copied! Send to anyone to open the same state.');
+    } catch {
+      showToast('Unable to copy share link.');
+    }
   };
 
-  const handleCopyMinified = () => {
+  const handlePaste = async () => {
+    try {
+      const text = await readTextFromClipboard();
+      if (!text) {
+        showToast('Clipboard is empty.');
+        return;
+      }
+      onInputChange(text);
+      showToast('Pasted from clipboard!');
+    } catch {
+      showToast('Unable to read clipboard. Use keyboard paste.');
+    }
+  };
+
+  const handleCopyMinified = async () => {
     try {
       const text = output || input;
       const parsed = JSON.parse(text);
-      navigator.clipboard.writeText(JSON.stringify(parsed));
-      showToast('Copied minified JSON!');
+      const copied = await writeTextToClipboard(JSON.stringify(parsed));
+      showToast(copied ? 'Copied minified JSON!' : 'Unable to copy.');
     } catch {
-      navigator.clipboard.writeText(output || input);
-      showToast('Copied to clipboard!');
+      const copied = await writeTextToClipboard(output || input);
+      showToast(copied ? 'Copied to clipboard!' : 'Unable to copy.');
     }
   };
 
@@ -130,6 +153,14 @@ export function ToolLayout({
           >
             <span>📋</span>
             <span className="hidden sm:inline">Copy</span>
+          </button>
+          <button
+            onClick={handlePaste}
+            title="Paste from clipboard"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+          >
+            <span>📥</span>
+            <span className="hidden sm:inline">Paste</span>
           </button>
           {showCopyMinified && hasJsonOutput() && (
             <button
