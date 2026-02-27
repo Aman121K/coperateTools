@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
@@ -37,6 +37,7 @@ export function PdfEditor() {
   const [file, setFile] = useState<File | null>(null);
   const [pages, setPages] = useState<string[]>([]);
   const [selectedPage, setSelectedPage] = useState(0);
+  const [previewUrl, setPreviewUrl] = useState('');
   const [sourcePdfBytes, setSourcePdfBytes] = useState<Uint8Array | null>(null);
   const [visualPage, setVisualPage] = useState(1);
   const [stampText, setStampText] = useState('Approved');
@@ -59,8 +60,20 @@ export function PdfEditor() {
     [pages]
   );
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  useEffect(() => {
+    setVisualPage(selectedPage + 1);
+  }, [selectedPage]);
+
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(f ? URL.createObjectURL(f) : '');
     setFile(f ?? null);
     setPages([]);
     setSelectedPage(0);
@@ -247,7 +260,7 @@ export function PdfEditor() {
   return (
     <ToolLayout
       title="PDF Editor (Text)"
-      description="Upload a PDF, edit extracted text page-by-page, then save as PDF or Word. Note: original layout/fonts are not preserved."
+      description="Upload a PDF and edit with side-by-side page preview. You can export as PDF/Word or apply visual overlays."
       input=""
       output={pages.join('\n\n')}
       onInputChange={() => {}}
@@ -328,15 +341,33 @@ export function PdfEditor() {
               ))}
             </div>
 
-            <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-tertiary)] p-3">
-              <label className="block text-sm text-[var(--text-secondary)] mb-2">
-                Editing Page {selectedPage + 1}
-              </label>
-              <textarea
-                value={pages[selectedPage] ?? ''}
-                onChange={(e) => updateCurrentPage(e.target.value)}
-                className="w-full min-h-[360px] rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-secondary)] p-3 text-sm text-[var(--text-primary)]"
-              />
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-tertiary)] p-3">
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">
+                  Original PDF Preview (Page {selectedPage + 1})
+                </label>
+                {previewUrl ? (
+                  <iframe
+                    title="PDF Preview"
+                    src={`${previewUrl}#page=${selectedPage + 1}&view=FitH`}
+                    className="w-full min-h-[420px] rounded-[var(--radius-sm)] border border-[var(--border)] bg-white"
+                  />
+                ) : (
+                  <div className="min-h-[420px] rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-secondary)] flex items-center justify-center text-sm text-[var(--text-muted)]">
+                    Select a PDF to open preview.
+                  </div>
+                )}
+              </div>
+              <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-tertiary)] p-3">
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">
+                  Editing Page {selectedPage + 1} Text
+                </label>
+                <textarea
+                  value={pages[selectedPage] ?? ''}
+                  onChange={(e) => updateCurrentPage(e.target.value)}
+                  className="w-full min-h-[420px] rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-secondary)] p-3 text-sm text-[var(--text-primary)]"
+                />
+              </div>
             </div>
 
             <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-tertiary)] p-4 space-y-4">
