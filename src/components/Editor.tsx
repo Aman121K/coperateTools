@@ -20,7 +20,7 @@ export function Editor({ value, onChange, language = 'plaintext', height = '300p
   const isFillHeight = height === '100%';
 
   return (
-    <div className={`rounded-lg overflow-hidden border border-[var(--border)] ${isFillHeight ? 'flex-1 min-h-0 flex flex-col' : ''}`}>
+    <div className={`rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg-tertiary)] shadow-[var(--shadow-card)] ${isFillHeight ? 'flex-1 min-h-0 flex flex-col' : ''}`}>
       {isFillHeight ? (
         <div className="flex-1 min-h-0">
           <EditorMonaco
@@ -32,7 +32,7 @@ export function Editor({ value, onChange, language = 'plaintext', height = '300p
             options={{
               readOnly,
               minimap: { enabled: false },
-              fontSize: 13,
+              fontSize: 14,
               lineNumbers: 'on',
               scrollBeyondLastLine: false,
               wordWrap: 'on',

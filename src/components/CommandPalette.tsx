@@ -58,14 +58,14 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-[10vh] bg-black/55 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-[var(--bg-secondary)] rounded-xl border border-[var(--border)] shadow-2xl overflow-hidden"
+        className="w-full max-w-2xl bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border)] shadow-[var(--shadow-elevated)] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[var(--border)]">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-[var(--border)] bg-[var(--bg-tertiary)]/50">
           <span className="text-[var(--text-muted)]">🔍</span>
           <input
             autoFocus
@@ -74,11 +74,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             placeholder="Search tools... Try: PDF, remove bg, BMI, tip, JSON"
             className="flex-1 bg-transparent outline-none text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base"
           />
-          <kbd className="hidden sm:inline px-2 py-1 rounded bg-[var(--bg-tertiary)] border border-[var(--border)] text-xs text-[var(--text-muted)]">
+          <kbd className="hidden sm:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-xs text-[var(--text-muted)]">
             ESC to close
           </kbd>
         </div>
-        <ul className="max-h-96 overflow-y-auto py-2">
+        <ul className="max-h-96 overflow-y-auto py-3 px-2">
           {filtered.length === 0 ? (
             <li className="px-4 py-8 text-center text-[var(--text-muted)]">
               No tools found. Try a different search term.
@@ -93,13 +93,13 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                     onClose();
                   }}
                   onMouseEnter={() => setSelected(i)}
-                  className={`w-full flex items-center gap-4 px-4 py-3 text-left transition-colors ${
+                  className={`w-full flex items-center gap-4 px-4 py-3.5 text-left rounded-xl border transition-colors ${
                     i === selected
-                      ? 'bg-[var(--accent-muted)]'
-                      : 'hover:bg-[var(--bg-tertiary)]'
+                      ? 'bg-[var(--accent-muted)] border-[var(--accent)]/35'
+                      : 'hover:bg-[var(--bg-tertiary)] border-transparent hover:border-[var(--border)]'
                   }`}
                 >
-                  <span className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--bg-tertiary)] text-lg shrink-0">
+                  <span className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border)] text-lg shrink-0">
                     {tool.icon}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -116,9 +116,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             ))
           )}
         </ul>
-        <div className="px-4 py-2 border-t border-[var(--border)] flex gap-4 text-xs text-[var(--text-muted)]">
-          <span><kbd className="px-1 rounded bg-[var(--bg-tertiary)]">↑↓</kbd> Navigate</span>
-          <span><kbd className="px-1 rounded bg-[var(--bg-tertiary)]">↵</kbd> Select</span>
+        <div className="px-5 py-3 border-t border-[var(--border)] flex gap-4 text-xs text-[var(--text-muted)] bg-[var(--bg-tertiary)]/35">
+          <span><kbd className="px-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)]">↑↓</kbd> Navigate</span>
+          <span><kbd className="px-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)]">↵</kbd> Select</span>
         </div>
       </div>
     </div>

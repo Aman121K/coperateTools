@@ -22,6 +22,7 @@ interface ToolLayoutProps {
   actions?: ReactNode;
   singlePanel?: boolean;
   showCopyMinified?: boolean;
+  showDownload?: boolean;
   /** Custom state to encode in share link. Defaults to { input, output }. */
   shareData?: Record<string, unknown>;
   /** Called when restoring from a share link. If not provided, falls back to onInputChange(data.input). */
@@ -43,6 +44,7 @@ export function ToolLayout({
   actions,
   singlePanel = false,
   showCopyMinified = true,
+  showDownload = true,
   shareData,
   onRestoreFromShare,
 }: ToolLayoutProps) {
@@ -138,18 +140,19 @@ export function ToolLayout({
 
   return (
     <div className="flex flex-col h-full">
-      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-6 py-4 border-b border-[var(--border)] bg-[var(--bg-secondary)]">
+      <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 px-4 sm:px-6 py-5 border-b border-[var(--border)] bg-[var(--bg-secondary)]/95">
         <div className="min-w-0">
-          <h1 className="text-lg sm:text-xl font-semibold text-[var(--text-primary)] truncate">{title}</h1>
+          <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)] mb-1">Tool Workspace</p>
+          <h1 className="text-xl sm:text-2xl font-semibold text-[var(--text-primary)] truncate">{title}</h1>
           {description && (
-            <p className="text-sm text-[var(--text-secondary)] mt-0.5 line-clamp-2 sm:line-clamp-none">{description}</p>
+            <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2 sm:line-clamp-none">{description}</p>
           )}
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
+        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap rounded-xl border border-[var(--border)] bg-[var(--bg-tertiary)]/70 p-2">
           <button
             onClick={handleCopy}
             title="Copy to clipboard"
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
           >
             <span>📋</span>
             <span className="hidden sm:inline">Copy</span>
@@ -157,7 +160,7 @@ export function ToolLayout({
           <button
             onClick={handlePaste}
             title="Paste from clipboard"
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
           >
             <span>📥</span>
             <span className="hidden sm:inline">Paste</span>
@@ -166,24 +169,26 @@ export function ToolLayout({
             <button
               onClick={handleCopyMinified}
               title="Copy minified JSON"
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
             >
               <span>⌫</span>
               <span className="hidden sm:inline">Minify</span>
             </button>
           )}
-          <button
-            onClick={() => handleDownload('output.json', output || input, 'application/json')}
-            title="Download"
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
-          >
-            <span>⬇</span>
-            <span className="hidden sm:inline">Download</span>
-          </button>
+          {showDownload && (
+            <button
+              onClick={() => handleDownload('output.json', output || input, 'application/json')}
+              title="Download"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+            >
+              <span>⬇</span>
+              <span className="hidden sm:inline">Download</span>
+            </button>
+          )}
           <button
             onClick={handleShare}
             title="Share link"
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-[var(--radius-sm)] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition-colors shadow-[var(--shadow-card)]"
           >
             <span>↗</span>
             <span className="hidden sm:inline">Share</span>
@@ -193,13 +198,13 @@ export function ToolLayout({
       </header>
 
       {toolHistory.length > 0 && (
-        <div className="px-6 py-2.5 border-b border-[var(--border)] flex gap-2 overflow-x-auto bg-[var(--bg-secondary)]/50">
+        <div className="px-4 sm:px-6 py-3 border-b border-[var(--border)] flex gap-2 overflow-x-auto bg-[var(--bg-secondary)]/45">
           <span className="text-xs font-medium text-[var(--text-muted)] self-center shrink-0">Recent:</span>
           {toolHistory.slice(0, 5).map((h) => (
             <button
               key={h.id}
               onClick={() => onInputChange(h.input)}
-              className="text-xs px-2.5 py-1.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--accent-muted)] hover:text-[var(--accent)] truncate max-w-36 border border-transparent hover:border-[var(--border)]"
+              className="text-xs px-2.5 py-1.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--accent-muted)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] truncate max-w-36 border border-[var(--border)]"
             >
               {h.input.slice(0, 35)}{h.input.length > 35 ? '…' : ''}
             </button>
@@ -211,17 +216,17 @@ export function ToolLayout({
         {children ? (
           children
         ) : singlePanel ? (
-          <div className="flex-1 min-h-0 flex flex-col">
+          <div className="flex-1 min-h-0 flex flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
             <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">{inputLabel}</label>
             <Editor value={input} onChange={onInputChange} language={inputLanguage} height="100%" />
           </div>
         ) : (
           <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6">
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 flex flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
               <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">{inputLabel}</label>
               <Editor value={input} onChange={onInputChange} language={inputLanguage} height="100%" />
             </div>
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0 flex flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
               <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">{outputLabel}</label>
               <Editor value={output} onChange={() => {}} language={outputLanguage} height="100%" readOnly />
             </div>

@@ -3,78 +3,60 @@ import { ToolLayout } from '../../components/ToolLayout';
 
 const SIZES = [16, 32, 48, 64, 128, 256];
 
-function createIcoFromCanvas(canvas: HTMLCanvasElement, sizes: number[]): Blob {
+async function canvasToPngBytes(canvas: HTMLCanvasElement): Promise<Uint8Array> {
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+  if (!blob) throw new Error('Failed to encode PNG');
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+async function createIcoFromCanvas(canvas: HTMLCanvasElement, sizes: number[]): Promise<Blob> {
   const w = canvas.width;
   const h = canvas.height;
 
-  const images: { data: Uint8Array; size: number }[] = [];
+  const images: { bytes: Uint8Array; size: number }[] = [];
   for (const size of sizes) {
     const c = document.createElement('canvas');
     c.width = size;
     c.height = size;
     const cctx = c.getContext('2d')!;
     cctx.drawImage(canvas, 0, 0, w, h, 0, 0, size, size);
-    const imgData = cctx.getImageData(0, 0, size, size);
-    images.push({ data: new Uint8Array(imgData.data), size });
+    const bytes = await canvasToPngBytes(c);
+    images.push({ bytes, size });
   }
 
-  const headerSize = 6 + 16 * images.length;
-  let offset = headerSize;
-  const header = new ArrayBuffer(headerSize);
-  const headerView = new DataView(header);
-  headerView.setUint16(0, 0, true);
-  headerView.setUint16(2, 1, true);
-  headerView.setUint16(4, images.length, true);
+  const headerSize = 6;
+  const dirSize = 16 * images.length;
+  const imageStart = headerSize + dirSize;
+  const totalImageBytes = images.reduce((sum, img) => sum + img.bytes.byteLength, 0);
+  const result = new Uint8Array(imageStart + totalImageBytes);
+  const view = new DataView(result.buffer);
 
-  const parts: ArrayBuffer[] = [header];
+  // ICONDIR
+  view.setUint16(0, 0, true);
+  view.setUint16(2, 1, true);
+  view.setUint16(4, images.length, true);
+
+  // ICONDIRENTRY + image bytes
+  let imageOffset = imageStart;
+  let writePos = imageStart;
   for (let i = 0; i < images.length; i++) {
-    const { size } = images[i];
-    const bmpHeaderSize = 40;
-    const rowSize = Math.floor((size * 4 + 3) / 4) * 4;
-    const pixelDataSize = rowSize * size;
-    const imageSize = bmpHeaderSize + pixelDataSize;
+    const { size, bytes } = images[i];
+    const entryOffset = headerSize + i * 16;
 
-    const dirEntry = new ArrayBuffer(16);
-    const de = new DataView(dirEntry);
-    de.setUint8(0, size);
-    de.setUint8(1, size);
-    de.setUint16(2, 0, true);
-    de.setUint16(4, 0, true);
-    de.setUint16(6, 1, true);
-    de.setUint16(8, 32, true);
-    de.setUint32(10, imageSize, true);
-    de.setUint32(14, offset, true);
-    parts.push(dirEntry);
-    offset += imageSize;
+    view.setUint8(entryOffset + 0, size === 256 ? 0 : size);
+    view.setUint8(entryOffset + 1, size === 256 ? 0 : size);
+    view.setUint8(entryOffset + 2, 0); // color count
+    view.setUint8(entryOffset + 3, 0); // reserved
+    view.setUint16(entryOffset + 4, 1, true); // planes
+    view.setUint16(entryOffset + 6, 32, true); // bpp
+    view.setUint32(entryOffset + 8, bytes.byteLength, true); // image size
+    view.setUint32(entryOffset + 12, imageOffset, true); // image offset
+
+    result.set(bytes, writePos);
+    imageOffset += bytes.byteLength;
+    writePos += bytes.byteLength;
   }
 
-  for (const { data: imgData, size } of images) {
-    const rowSize = Math.floor((size * 4 + 3) / 4) * 4;
-    const bmpHeader = new ArrayBuffer(40);
-    const bv = new DataView(bmpHeader);
-    bv.setUint32(0, 40, true);
-    bv.setInt32(4, size, true);
-    bv.setInt32(8, -size, true);
-    bv.setUint16(12, 1, true);
-    bv.setUint16(14, 32, true);
-
-    const padded = new Uint8Array(rowSize * size);
-    for (let y = size - 1; y >= 0; y--) {
-      const src = y * size * 4;
-      const dst = (size - 1 - y) * rowSize;
-      for (let x = 0; x < size * 4; x++) padded[dst + x] = imgData[src + x];
-    }
-    parts.push(bmpHeader);
-    parts.push(padded.buffer);
-  }
-
-  const total = parts.reduce((a, p) => a + p.byteLength, 0);
-  const result = new Uint8Array(total);
-  let pos = 0;
-  for (const p of parts) {
-    result.set(new Uint8Array(p), pos);
-    pos += p.byteLength;
-  }
   return new Blob([result], { type: 'image/x-icon' });
 }
 
@@ -107,13 +89,19 @@ export function PngToIco() {
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0);
       try {
-        const blob = createIcoFromCanvas(canvas, sizes.length ? sizes : [32]);
-        setOutput(blob);
+        createIcoFromCanvas(canvas, sizes.length ? sizes : [32])
+          .then((blob) => setOutput(blob))
+          .catch((e) => setError((e as Error).message || 'Conversion failed'));
       } catch (e) {
         setError((e as Error).message || 'Conversion failed');
+      } finally {
+        URL.revokeObjectURL(img.src);
       }
     };
-    img.onerror = () => setError('Failed to load image');
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src);
+      setError('Failed to load image');
+    };
     img.src = URL.createObjectURL(file);
   };
 
@@ -122,8 +110,10 @@ export function PngToIco() {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(output);
     a.download = file.name.replace(/\.[^.]+$/, '') + '.ico';
+    document.body.appendChild(a);
     a.click();
     URL.revokeObjectURL(a.href);
+    document.body.removeChild(a);
   };
 
   return (

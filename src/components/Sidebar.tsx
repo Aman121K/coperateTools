@@ -19,32 +19,40 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   }, {});
 
   return (
-    <aside className="w-64 min-w-64 h-full bg-[var(--bg-secondary)] border-r border-[var(--border)] flex flex-col overflow-hidden">
-      <div className="p-3 sm:p-4 border-b border-[var(--border)] shrink-0">
-        <img src="/logo.png" alt="Corporate Tools" className="h-14 w-14 sm:h-16 sm:w-16 object-contain shrink-0" />
+    <aside className="w-72 min-w-72 h-full bg-[var(--bg-secondary)] border-r border-[var(--border)] flex flex-col overflow-hidden shadow-[var(--shadow-card)]">
+      <div className="p-4 border-b border-[var(--border)] shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-xl bg-[var(--bg-tertiary)] border border-[var(--border)] flex items-center justify-center shadow-[var(--shadow-card)]">
+            <img src="/logo.png" alt="Corporate Tools" className="h-9 w-9 object-contain shrink-0" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">Workspace</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)] truncate">DevTool Suite</p>
+          </div>
+        </div>
         <button
           type="button"
-          className="mt-2 flex items-center gap-2 w-full px-3 py-2.5 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--accent-muted)] hover:border-[var(--accent)]/30 border border-[var(--border)] transition-colors text-left"
+          className="mt-4 flex items-center gap-2 w-full px-3.5 py-3 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] hover:bg-[var(--accent-muted)] hover:border-[var(--accent)]/35 border border-[var(--border)] transition-colors text-left"
           onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
         >
           <span className="text-[var(--text-muted)]">🔍</span>
-          <span className="flex-1 text-sm text-[var(--text-secondary)]">Search tools...</span>
-          <kbd className="hidden sm:inline px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] border border-[var(--border)] font-mono text-[10px] text-[var(--text-muted)]">
+          <span className="flex-1 text-sm text-[var(--text-secondary)]">Search a tool or feature</span>
+          <kbd className="hidden sm:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] font-mono text-[10px] text-[var(--text-muted)]">
             ⌘K
           </kbd>
         </button>
         {user && (
-          <div className="mt-2 pt-2 border-t border-[var(--border)] flex items-center gap-2">
+          <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center gap-2">
             {user.photoURL && <img src={user.photoURL} alt="" className="w-8 h-8 rounded-full" />}
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-[var(--text-primary)] truncate">{user.displayName || user.email}</p>
-              <p className="text-[10px] text-[var(--text-muted)] truncate">{profile && DEPARTMENTS[profile.department]}</p>
+              <p className="text-xs font-semibold text-[var(--text-primary)] truncate">{user.displayName || user.email}</p>
+              <p className="text-[11px] text-[var(--text-muted)] truncate">{profile && DEPARTMENTS[profile.department]}</p>
             </div>
             <div className="flex gap-1">
               <button
                 type="button"
                 onClick={() => navigate('/select-role')}
-                className="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
+                className="p-1.5 rounded border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
                 title="Change role"
               >
                 ⚙
@@ -52,7 +60,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
               <button
                 type="button"
                 onClick={() => signOut().then(() => navigate('/login'))}
-                className="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
+                className="p-1.5 rounded border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
                 title="Sign out"
               >
                 🚪
@@ -61,27 +69,27 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           </div>
         )}
       </div>
-      <nav className="flex-1 min-h-0 overflow-y-auto p-3">
+      <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4">
         {Object.entries(byDepartment).map(([dept, tools]) => (
           <div key={dept} className="mb-5">
-            <h2 className="text-[11px] font-semibold text-[var(--text-muted)] uppercase tracking-wider px-2 mb-2">
+            <h2 className="text-[11px] font-semibold text-[var(--text-muted)] uppercase tracking-[0.14em] px-2 mb-2">
               {DEPARTMENTS[dept as keyof typeof DEPARTMENTS]}
             </h2>
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {tools.map((tool) => (
                 <li key={tool.id}>
                   <NavLink
                     to={tool.path}
                     onClick={onNavigate}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
+                      `group flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
                         isActive
-                          ? 'bg-[var(--accent-muted)] text-[var(--accent)] border border-[var(--accent)]/30'
+                          ? 'bg-[var(--accent-muted)] text-[var(--text-primary)] border border-[var(--accent)]/35 shadow-[var(--shadow-card)]'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent hover:border-[var(--border)]'
                       }`
                     }
                   >
-                    <span className="text-base w-6 h-6 flex items-center justify-center rounded bg-[var(--bg-tertiary)] shrink-0">
+                    <span className="text-base w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-tertiary)] border border-[var(--border)] shrink-0">
                       {tool.icon}
                     </span>
                     <span className="truncate">{tool.name}</span>
