@@ -20,6 +20,7 @@ export const TOOLS: Tool[] = [
   { id: 'barcode-generator', name: 'Barcode Generator', department: 'admin', category: 'generators', path: '/tools/admin/barcode', icon: '📊' },
   { id: 'pdf-merge', name: 'PDF Merger', department: 'admin', category: 'documents', path: '/tools/admin/pdf-merge', icon: '📑' },
   { id: 'pdf-split', name: 'PDF Splitter', department: 'admin', category: 'documents', path: '/tools/admin/pdf-split', icon: '✂' },
+  { id: 'pdf-editor', name: 'PDF Editor', department: 'admin', category: 'documents', path: '/tools/admin/pdf-editor', icon: '🖊' },
   { id: 'unit-converter', name: 'Unit Converter', department: 'admin', category: 'converters', path: '/tools/admin/unit-converter', icon: '📏' },
   { id: 'date-calculator', name: 'Date Calculator', department: 'admin', category: 'calculators', path: '/tools/admin/date-calc', icon: '📅' },
   { id: 'age-calculator', name: 'Age Calculator', department: 'admin', category: 'calculators', path: '/tools/admin/age', icon: '🎂' },
