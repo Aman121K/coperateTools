@@ -53,9 +53,15 @@
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
     background-image:
-      radial-gradient(1000px 600px at -10% -10%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 70%),
-      radial-gradient(900px 600px at 105% 20%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+      radial-gradient(1000px 600px at -10% -10%, rgba(46, 168, 255, 0.15), transparent 70%),
+      radial-gradient(900px 600px at 105% 20%, rgba(46, 168, 255, 0.12), transparent 70%);
     background-attachment: fixed;
+  }
+
+  .light body {
+    background-image:
+      radial-gradient(1000px 600px at -10% -10%, rgba(0, 127, 214, 0.1), transparent 70%),
+      radial-gradient(900px 600px at 105% 20%, rgba(0, 127, 214, 0.08), transparent 70%);
   }
 
   .font-mono, textarea, pre, code {
@@ -79,7 +85,7 @@
   button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
+    box-shadow: 0 0 0 4px rgba(46, 168, 255, 0.2);
   }
 
   ::-webkit-scrollbar {
@@ -95,7 +101,7 @@
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in srgb, var(--text-muted) 75%, var(--accent) 25%);
+    background: #4b6284;
   }
 
   /* Date input calendar icon - white on dark theme for visibility */

@@ -212,7 +212,7 @@ function AppContent() {
                 onClick={() => setSidebarOpen(false)}
                 aria-hidden="true"
               />
-              <aside className={`fixed md:relative top-16 bottom-0 md:top-auto md:bottom-auto left-0 md:left-auto z-50 md:z-auto w-72 min-w-72 md:h-full flex-shrink-0 transform transition-transform duration-200 ease-out md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+              <aside className={`fixed md:relative top-16 bottom-0 md:top-auto md:bottom-auto left-0 md:left-auto z-50 md:z-auto w-64 min-w-64 lg:w-72 lg:min-w-72 md:h-full flex-shrink-0 transform transition-transform duration-200 ease-out md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
                 <Sidebar onNavigate={() => setSidebarOpen(false)} />
               </aside>
               <main className="flex-1 overflow-hidden flex flex-col min-w-0">

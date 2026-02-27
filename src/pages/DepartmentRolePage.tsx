@@ -25,44 +25,50 @@ export function DepartmentRolePage() {
     }
   };
 
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg-primary)] p-6">
-      <div className="w-full max-w-lg rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-8 shadow-2xl shadow-black/20">
-        <div className="flex items-center gap-3 mb-6">
-          {user?.photoURL && (
-            <img src={user.photoURL} alt="" className="w-12 h-12 rounded-full" />
-          )}
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Welcome, {user?.displayName || user?.email || 'User'}
+    <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-8 sm:px-6">
+      <div className="mx-auto w-full max-w-4xl rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6 sm:p-8 shadow-[var(--shadow-elevated)]">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+          <div className="h-14 w-14 rounded-2xl border border-[var(--border)] bg-[var(--bg-tertiary)] flex items-center justify-center">
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="" className="h-12 w-12 rounded-xl object-cover" />
+            ) : (
+              <span className="text-xl">👤</span>
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">Step 1 of 1</p>
+            <h1 className="text-2xl font-semibold text-[var(--text-primary)] truncate">
+              Set your workspace profile
             </h1>
-            <p className="text-sm text-[var(--text-muted)]">Choose your area to see relevant tools, or browse all</p>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
+              Welcome {user?.displayName || user?.email || 'User'}. Choose department and role for a better default experience.
+            </p>
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-7">
           <button
             type="button"
             onClick={() => {
               setDept('general');
               setRoleId('general');
             }}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-medium transition-all ${
+            className={`w-full flex items-center justify-center gap-2 px-4 py-4 rounded-xl font-medium transition-all border ${
               dept === 'general'
-                ? 'bg-[var(--accent)] text-white'
-                : 'bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] border border-[var(--border)]'
+                ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                : 'bg-[var(--bg-tertiary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border-[var(--border)]'
             }`}
           >
             <span>📂</span>
-            <span>Browse all tools ({TOOLS.length}+)</span>
+            <span>Browse all tools ({TOOLS.length}+ available)</span>
           </button>
 
-          <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-tertiary)]/45 p-4 sm:p-5">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
               Or pick a department
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {deptList.map((d) => (
                 <button
                   key={d}
@@ -71,10 +77,10 @@ export function DepartmentRolePage() {
                     setDept(d);
                     setRoleId(null);
                   }}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                  className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
                     dept === d
-                      ? 'bg-[var(--accent)] text-white'
-                      : 'bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)]'
+                      ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                      : 'bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border-[var(--border)]'
                   }`}
                 >
                   {DEPARTMENTS[d as keyof typeof DEPARTMENTS]}
@@ -84,20 +90,20 @@ export function DepartmentRolePage() {
           </div>
 
           {dept && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-tertiary)]/45 p-4 sm:p-5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                 Role
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {roles.map((r) => (
                   <button
                     key={r.id}
                     type="button"
                     onClick={() => setRoleId(r.id)}
-                    className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                    className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
                       roleId === r.id
-                        ? 'bg-[var(--accent)] text-white'
-                        : 'bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)]'
+                        ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                        : 'bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border-[var(--border)]'
                     }`}
                   >
                     <span>{r.icon}</span>
@@ -110,17 +116,17 @@ export function DepartmentRolePage() {
         </div>
 
         {dept && roleId && (
-          <p className="mt-4 text-sm text-[var(--text-muted)]">
-            You’ll have access to <strong>all {TOOLS.length}+ tools</strong> — your selection helps us personalize your experience.
+          <p className="mt-5 text-sm text-[var(--text-secondary)]">
+            You will have access to <strong>all {TOOLS.length}+ tools</strong>. This helps us personalize default recommendations.
           </p>
         )}
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-6 flex gap-2">
           <button
             type="button"
             onClick={handleSave}
             disabled={!dept || !roleId}
-            className="flex-1 py-3 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-colors"
+            className="flex-1 py-3.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-colors"
           >
             Continue to Tools
           </button>
@@ -128,7 +134,7 @@ export function DepartmentRolePage() {
             <button
               type="button"
               onClick={() => navigate('/tools/finance/currency', { replace: true })}
-              className="px-4 py-3 rounded-xl bg-[var(--bg-tertiary)] hover:bg-[var(--border)] text-[var(--text-primary)] font-medium"
+              className="px-4 py-3.5 rounded-xl border border-[var(--border)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] font-medium"
             >
               Keep current
             </button>
