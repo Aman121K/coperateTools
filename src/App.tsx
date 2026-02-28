@@ -76,6 +76,7 @@ import { BarcodeGenerator } from './tools/admin/BarcodeGenerator';
 import { PdfMerge } from './tools/admin/PdfMerge';
 import { PdfSplit } from './tools/admin/PdfSplit';
 import { PdfEditor } from './tools/admin/PdfEditor';
+import { MyActivity } from './tools/admin/MyActivity';
 import { UnitConverter } from './tools/admin/UnitConverter';
 import { DateCalculator } from './tools/admin/DateCalculator';
 import { AgeCalculator } from './tools/admin/AgeCalculator';
@@ -241,6 +242,7 @@ function AppContent() {
           <Route path="/tools/admin/pdf-merge" element={<PdfMerge />} />
           <Route path="/tools/admin/pdf-split" element={<PdfSplit />} />
           <Route path="/tools/admin/pdf-editor" element={<PdfEditor />} />
+          <Route path="/tools/admin/my-activity" element={<MyActivity />} />
           <Route path="/tools/admin/unit-converter" element={<UnitConverter />} />
           <Route path="/tools/admin/date-calc" element={<DateCalculator />} />
           <Route path="/tools/admin/age" element={<AgeCalculator />} />

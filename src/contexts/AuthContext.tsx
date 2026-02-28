@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth, googleProvider, facebookProvider, githubProvider, isFirebaseConfigured } from '../config/firebase';
+import { auth, db, googleProvider, facebookProvider, githubProvider, isFirebaseConfigured } from '../config/firebase';
+import { logUserActivity, upsertUserProfile } from '../services/activityLogger';
 import type { UserProfile } from '../types';
 
 interface AuthUser {
@@ -47,12 +48,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const unsub = onAuthStateChanged(auth, (fbUser) => {
       if (fbUser) {
-        setUser({
+        const nextUser = {
           uid: fbUser.uid,
           email: fbUser.email ?? null,
           displayName: fbUser.displayName ?? null,
           photoURL: fbUser.photoURL ?? null,
-        });
+        };
+        setUser(nextUser);
+        void upsertUserProfile(db, nextUser.uid, nextUser, profile).catch(() => {});
+        void logUserActivity(db, nextUser.uid, { action: 'login_success', provider: 'oauth' }).catch(() => {});
         setIsDemo(false);
       } else {
         setUser(null);
@@ -65,6 +69,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const setProfile = (p: UserProfile) => {
     setProfileState(p);
     localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+    if (user) {
+      void upsertUserProfile(db, user.uid, user, p).catch(() => {});
+      void logUserActivity(db, user.uid, {
+        action: 'profile_updated',
+        department: p.department,
+        roleId: p.roleId,
+      }).catch(() => {});
+    }
   };
 
   const signInWithGoogle = async () => {
@@ -108,6 +120,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     if (auth) await firebaseSignOut(auth);
+    if (user) {
+      void logUserActivity(db, user.uid, { action: 'logout' }).catch(() => {});
+    }
     setUser(null);
     setProfileState(null);
     localStorage.removeItem(PROFILE_KEY);

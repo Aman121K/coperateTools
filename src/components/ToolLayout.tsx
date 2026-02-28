@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Editor } from './Editor';
 import { useHistory } from '../hooks/useHistory';
 import { Toast } from './Toast';
 import { useShareLink } from '../hooks/useShareLink';
 import { writeTextToClipboard, readTextFromClipboard } from '../utils/clipboard';
+import { useAuth } from '../contexts/AuthContext';
+import { db } from '../config/firebase';
+import { logUserActivity } from '../services/activityLogger';
 
 interface ToolLayoutProps {
   title: string;
@@ -50,9 +53,11 @@ export function ToolLayout({
 }: ToolLayoutProps) {
   const { add, toolHistory } = useHistory(toolId);
   const [toast, setToast] = useState<string | null>(null);
+  const { user, isDemo } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { copyShareLink, decodeShare } = useShareLink(toolId);
+  const lastInputLogRef = useRef<number>(0);
 
   useEffect(() => {
     const decoded = decodeShare(location.hash);
@@ -65,6 +70,33 @@ export function ToolLayout({
     navigate(location.pathname, { replace: true });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (!user || isDemo) return;
+    void logUserActivity(db, user.uid, {
+      action: 'tool_opened',
+      toolId,
+      path: location.pathname,
+    }).catch(() => {});
+  }, [user, isDemo, toolId, location.pathname]);
+
+  useEffect(() => {
+    if (!user || isDemo) return;
+    const id = window.setTimeout(() => {
+      const now = Date.now();
+      if (now - lastInputLogRef.current < 10000) return;
+      lastInputLogRef.current = now;
+      void logUserActivity(db, user.uid, {
+        action: 'tool_data_used',
+        toolId,
+        input,
+        output,
+        inputLength: input.length,
+        outputLength: output.length,
+      }).catch(() => {});
+    }, 1400);
+    return () => clearTimeout(id);
+  }, [input, output, user, isDemo, toolId]);
+
   const showToast = (msg: string) => {
     setToast(msg);
   };
@@ -75,6 +107,14 @@ export function ToolLayout({
       const copied = await writeTextToClipboard(text);
       if (copied) {
         add({ toolId, input, output: text });
+        if (user && !isDemo) {
+          void logUserActivity(db, user.uid, {
+            action: 'copy_clicked',
+            toolId,
+            output: text,
+            outputLength: text.length,
+          }).catch(() => {});
+        }
         showToast('Copied to clipboard!');
       } else {
         showToast('Unable to copy. Please use keyboard copy.');
@@ -86,6 +126,12 @@ export function ToolLayout({
     const data = shareData ?? { input, output };
     try {
       await copyShareLink(data);
+      if (user && !isDemo) {
+        void logUserActivity(db, user.uid, {
+          action: 'share_link_created',
+          toolId,
+        }).catch(() => {});
+      }
       showToast('Share link copied! Send to anyone to open the same state.');
     } catch {
       showToast('Unable to copy share link.');
@@ -100,6 +146,14 @@ export function ToolLayout({
         return;
       }
       onInputChange(text);
+      if (user && !isDemo) {
+        void logUserActivity(db, user.uid, {
+          action: 'paste_clicked',
+          toolId,
+          input: text,
+          inputLength: text.length,
+        }).catch(() => {});
+      }
       showToast('Pasted from clipboard!');
     } catch {
       showToast('Unable to read clipboard. Use keyboard paste.');
