@@ -31,6 +31,10 @@ const PROFILE_KEY = 'devtool_user_profile';
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function logDbError(scope: string, err: unknown) {
+  console.error(`[firebase][${scope}]`, err);
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfileState] = useState<UserProfile | null>(() => {
@@ -55,8 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           photoURL: fbUser.photoURL ?? null,
         };
         setUser(nextUser);
-        void upsertUserProfile(db, nextUser.uid, nextUser, profile).catch(() => {});
-        void logUserActivity(db, nextUser.uid, { action: 'login_success', provider: 'oauth' }).catch(() => {});
+        void upsertUserProfile(db, nextUser.uid, nextUser, profile).catch((e) => logDbError('upsertUserProfile:onAuthStateChanged', e));
+        void logUserActivity(db, nextUser.uid, { action: 'login_success', provider: 'oauth' }).catch((e) => logDbError('logUserActivity:login_success', e));
         setIsDemo(false);
       } else {
         setUser(null);
@@ -70,12 +74,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfileState(p);
     localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
     if (user) {
-      void upsertUserProfile(db, user.uid, user, p).catch(() => {});
+      void upsertUserProfile(db, user.uid, user, p).catch((e) => logDbError('upsertUserProfile:setProfile', e));
       void logUserActivity(db, user.uid, {
         action: 'profile_updated',
         department: p.department,
         roleId: p.roleId,
-      }).catch(() => {});
+      }).catch((e) => logDbError('logUserActivity:profile_updated', e));
     }
   };
 
@@ -121,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     if (auth) await firebaseSignOut(auth);
     if (user) {
-      void logUserActivity(db, user.uid, { action: 'logout' }).catch(() => {});
+      void logUserActivity(db, user.uid, { action: 'logout' }).catch((e) => logDbError('logUserActivity:logout', e));
     }
     setUser(null);
     setProfileState(null);
