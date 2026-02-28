@@ -28,8 +28,8 @@ export function Sidebar({ onNavigate }: SidebarProps) {
             <img src="/logo.png" alt="Corporate Tools" className="h-9 w-9 object-contain shrink-0" />
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">Workspace</p>
-            <p className="text-sm font-semibold text-[var(--text-primary)] truncate">DevTool Suite</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">Hub</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)] truncate">Internal Tools Hub</p>
           </div>
         </div>
         <button

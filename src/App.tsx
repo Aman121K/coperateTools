@@ -190,7 +190,7 @@ function AppContent() {
                 <span className="text-xl">{sidebarOpen ? '✕' : '☰'}</span>
               </button>
               <div className="flex-1 min-w-0">
-                <h1 className="text-sm sm:text-base font-semibold tracking-wide text-[var(--text-primary)] truncate">DevTool Workspace</h1>
+                <h1 className="text-sm sm:text-base font-semibold tracking-wide text-[var(--text-primary)] truncate">Internal Tools Hub</h1>
                 <p className="hidden sm:block text-xs text-[var(--text-muted)]">Fast internal tools for your daily operations</p>
               </div>
               <div className="flex items-center gap-2">
