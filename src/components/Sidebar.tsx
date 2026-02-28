@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { TOOLS, DEPARTMENTS } from '../data/tools';
 import { useAuth } from '../contexts/AuthContext';
 import { getToolsForProfile } from '../utils/toolAccess';
@@ -10,6 +11,7 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const { user, profile, signOut } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const tools = getToolsForProfile(TOOLS, profile);
 
@@ -42,30 +44,61 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           </kbd>
         </button>
         {user && (
-          <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center gap-2">
-            {user.photoURL && <img src={user.photoURL} alt="" className="w-8 h-8 rounded-full" />}
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-[var(--text-primary)] truncate">{user.displayName || user.email}</p>
-              <p className="text-[11px] text-[var(--text-muted)] truncate">{profile && DEPARTMENTS[profile.department]}</p>
-            </div>
-            <div className="flex gap-1">
-              <button
-                type="button"
-                onClick={() => navigate('/select-role')}
-                className="p-1.5 rounded border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
-                title="Change role"
-              >
-                ⚙
-              </button>
-              <button
-                type="button"
-                onClick={() => signOut().then(() => navigate('/login'))}
-                className="p-1.5 rounded border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)]"
-                title="Sign out"
-              >
-                🚪
-              </button>
-            </div>
+          <div className="mt-4 pt-3 border-t border-[var(--border)] relative">
+            <button
+              type="button"
+              onClick={() => setMenuOpen((s) => !s)}
+              className="w-full flex items-center gap-2 rounded-[var(--radius-sm)] px-2 py-2 hover:bg-[var(--bg-tertiary)] border border-transparent hover:border-[var(--border)]"
+            >
+              {user.photoURL ? (
+                <img src={user.photoURL} alt="" className="w-8 h-8 rounded-full" />
+              ) : (
+                <span className="w-8 h-8 rounded-full bg-[var(--bg-tertiary)] border border-[var(--border)] flex items-center justify-center text-xs text-[var(--text-secondary)]">
+                  {(user.displayName || user.email || 'U').slice(0, 1).toUpperCase()}
+                </span>
+              )}
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-xs font-semibold text-[var(--text-primary)] truncate">{user.displayName || user.email}</p>
+                <p className="text-[11px] text-[var(--text-muted)] truncate">{profile && DEPARTMENTS[profile.department]}</p>
+              </div>
+              <span className="text-[var(--text-muted)] text-xs">{menuOpen ? '▲' : '▼'}</span>
+            </button>
+
+            {menuOpen && (
+              <div className="absolute left-0 right-0 top-full mt-2 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] overflow-hidden z-20">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    navigate('/tools/admin/my-activity');
+                    onNavigate?.();
+                  }}
+                  className="w-full text-left px-3 py-2.5 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]"
+                >
+                  🕘 My Activity
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    navigate('/select-role');
+                  }}
+                  className="w-full text-left px-3 py-2.5 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]"
+                >
+                  ⚙ Change Role
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    signOut().then(() => navigate('/login'));
+                  }}
+                  className="w-full text-left px-3 py-2.5 text-sm text-[var(--error)] hover:bg-[var(--bg-tertiary)]"
+                >
+                  🚪 Sign Out
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
