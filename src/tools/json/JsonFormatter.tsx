@@ -29,19 +29,19 @@ export function JsonFormatter() {
       outputLanguage="json"
       toolId="json-formatter"
     >
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6">
-        <div className="flex-1 min-h-0 flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 shrink-0">Paste your JSON</label>
-          <Editor value={input} onChange={setInput} language="json" height="100%" />
+          <Editor value={input} onChange={setInput} language="json" height="320px" />
           {error && (
             <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1 shrink-0">
               <span>⚠</span> {error}
             </p>
           )}
         </div>
-        <div className="flex-1 min-h-0 flex flex-col">
+        <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
           <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 shrink-0">Formatted output</label>
-          <Editor value={output} onChange={() => {}} language="json" height="100%" readOnly />
+          <Editor value={output} onChange={() => {}} language="json" height="320px" readOnly />
         </div>
       </div>
     </ToolLayout>

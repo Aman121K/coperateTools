@@ -168,9 +168,9 @@ export function TimestampConverter() {
         </div>
       }
     >
-      <div className="flex-1 min-h-0 flex flex-col">
+      <div className="space-y-4">
       {mode === 'to-date' && selectedTimezones.length > 0 && (
-        <div className="px-4 sm:px-6 py-2 flex flex-wrap items-center gap-2 border-b border-[var(--border)] bg-[var(--bg-secondary)]/50 shrink-0">
+        <div className="px-3 sm:px-4 py-2 flex flex-wrap items-center gap-2 border border-[var(--border)] rounded-[var(--radius-sm)] bg-[var(--bg-secondary)]/50">
           <span className="text-xs text-[var(--text-muted)]">Showing:</span>
           {selectedTimezones.map((tz) => {
             const info = TIMEZONES.find((t) => t.tz === tz);
@@ -200,17 +200,17 @@ export function TimestampConverter() {
           </button>
         </div>
       )}
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6">
-        <div className="flex-1 min-h-0 flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
           <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">
             {mode === 'to-date' ? 'Unix timestamp (seconds or ms)' : 'Date (ISO, locale, or natural)'}
           </label>
-          <Editor value={input} onChange={setInput} language="plaintext" height="100%" />
+          <Editor value={input} onChange={setInput} language="plaintext" height="300px" />
           {error && <p className="mt-2 text-red-500 text-sm shrink-0">{error}</p>}
         </div>
-        <div className="flex-1 min-h-0 flex flex-col">
+        <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)] p-3 sm:p-4">
           <label className="block text-sm text-[var(--text-secondary)] mb-2 shrink-0">Result</label>
-          <Editor value={output} onChange={() => {}} language="plaintext" height="100%" readOnly />
+          <Editor value={output} onChange={() => {}} language="plaintext" height="300px" readOnly />
         </div>
       </div>
       </div>
