@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Sidebar } from './components/Sidebar';
 import { CommandPalette } from './components/CommandPalette';
+import { BookmarksBar } from './components/BookmarksBar';
 import { useTheme } from './hooks/useTheme';
 import { LoginPage } from './pages/LoginPage';
 import { DepartmentRolePage } from './pages/DepartmentRolePage';
@@ -220,6 +221,7 @@ function AppContent() {
                 </button>
               </div>
             </header>
+            <BookmarksBar />
             <div className="flex flex-1 overflow-hidden relative">
               <div
                 className={`fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}

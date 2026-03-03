@@ -23,12 +23,13 @@ function formatDate(value: unknown): string {
 }
 
 export function MyActivity() {
-  const { user, isDemo } = useAuth();
+  const { user, authProvider } = useAuth();
+  const canReadCloudActivity = authProvider === 'firebase';
   const [rows, setRows] = useState<ActivityRow[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!user || isDemo) {
+    if (!user || !canReadCloudActivity) {
       setRows([]);
       return;
     }
@@ -39,7 +40,7 @@ export function MyActivity() {
       (e) => setError(e.message || 'Failed to load activities.')
     );
     return () => unsub();
-  }, [user, isDemo]);
+  }, [user, canReadCloudActivity]);
 
   const summary = useMemo(() => {
     const tools = new Set(rows.map((r) => r.toolId).filter(Boolean));
@@ -59,12 +60,12 @@ export function MyActivity() {
       showDownload={false}
     >
       <div className="space-y-4">
-        {isDemo && (
+        {!canReadCloudActivity && (
           <p className="text-sm text-[var(--text-muted)]">
-            Activity logging is disabled in Demo mode. Login with Google/Facebook/GitHub to store activity in Firebase.
+            Activity logging is only available with Google login (Firebase).
           </p>
         )}
-        {!isDemo && (
+        {canReadCloudActivity && (
           <div className="flex gap-2 text-xs text-[var(--text-muted)]">
             <span className="px-2 py-1 rounded border border-[var(--border)] bg-[var(--bg-tertiary)]">Events: {summary.total}</span>
             <span className="px-2 py-1 rounded border border-[var(--border)] bg-[var(--bg-tertiary)]">Tools used: {summary.tools}</span>

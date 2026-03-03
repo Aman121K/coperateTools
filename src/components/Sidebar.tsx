@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { TOOLS, DEPARTMENTS } from '../data/tools';
 import { useAuth } from '../contexts/AuthContext';
 import { getToolsForProfile } from '../utils/toolAccess';
-import { useToolBookmarks } from '../hooks/useToolBookmarks';
 import type { Tool } from '../types';
 
 interface SidebarProps {
@@ -12,13 +11,9 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const { user, profile, signOut } = useAuth();
-  const { bookmarkedIds, isBookmarked, toggleBookmark } = useToolBookmarks();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const tools = getToolsForProfile(TOOLS, profile);
-  const bookmarkedTools = bookmarkedIds
-    .map((toolId) => tools.find((tool) => tool.id === toolId))
-    .filter((tool): tool is Tool => Boolean(tool));
 
   const byDepartment = tools.reduce<Record<string, Tool[]>>((acc, t) => {
     (acc[t.department] ??= []).push(t);
@@ -108,45 +103,6 @@ export function Sidebar({ onNavigate }: SidebarProps) {
         )}
       </div>
       <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4">
-        {bookmarkedTools.length > 0 && (
-          <div className="mb-5">
-            <h2 className="text-[11px] font-semibold text-[var(--text-muted)] uppercase tracking-[0.14em] px-2 mb-2">
-              Bookmarked
-            </h2>
-            <ul className="space-y-1">
-              {bookmarkedTools.map((tool) => (
-                <li key={`bookmark-${tool.id}`}>
-                  <div className="group flex items-center gap-2 rounded-[var(--radius-sm)] border border-transparent hover:border-[var(--border)] pr-1">
-                    <NavLink
-                      to={tool.path}
-                      onClick={onNavigate}
-                      className={({ isActive }) =>
-                        `flex-1 flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
-                          isActive
-                            ? 'bg-[var(--accent-muted)] text-[var(--text-primary)] border border-[var(--accent)]/35 shadow-[var(--shadow-card)]'
-                            : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent'
-                        }`
-                      }
-                    >
-                      <span className="text-base w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-tertiary)] border border-[var(--border)] shrink-0">
-                        {tool.icon}
-                      </span>
-                      <span className="truncate">{tool.name}</span>
-                    </NavLink>
-                    <button
-                      type="button"
-                      onClick={() => toggleBookmark(tool.id)}
-                      className="w-7 h-7 rounded-md border border-[var(--border)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs shrink-0"
-                      aria-label={`Remove ${tool.name} bookmark`}
-                    >
-                      ★
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
         {Object.entries(byDepartment).map(([dept, tools]) => (
           <div key={dept} className="mb-5">
             <h2 className="text-[11px] font-semibold text-[var(--text-muted)] uppercase tracking-[0.14em] px-2 mb-2">
@@ -155,36 +111,22 @@ export function Sidebar({ onNavigate }: SidebarProps) {
             <ul className="space-y-1">
               {tools.map((tool) => (
                 <li key={tool.id}>
-                  <div className="group flex items-center gap-2 rounded-[var(--radius-sm)] border border-transparent hover:border-[var(--border)] pr-1">
-                    <NavLink
-                      to={tool.path}
-                      onClick={onNavigate}
-                      className={({ isActive }) =>
-                        `flex-1 flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
-                          isActive
-                            ? 'bg-[var(--accent-muted)] text-[var(--text-primary)] border border-[var(--accent)]/35 shadow-[var(--shadow-card)]'
-                            : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent'
-                        }`
-                      }
-                    >
-                      <span className="text-base w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-tertiary)] border border-[var(--border)] shrink-0">
-                        {tool.icon}
-                      </span>
-                      <span className="truncate">{tool.name}</span>
-                    </NavLink>
-                    <button
-                      type="button"
-                      onClick={() => toggleBookmark(tool.id)}
-                      className={`w-7 h-7 rounded-md border text-xs shrink-0 transition-colors ${
-                        isBookmarked(tool.id)
-                          ? 'border-[var(--accent)]/40 bg-[var(--accent-muted)] text-[var(--text-primary)]'
-                          : 'border-[var(--border)] bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]'
-                      }`}
-                      aria-label={isBookmarked(tool.id) ? `Remove ${tool.name} bookmark` : `Bookmark ${tool.name}`}
-                    >
-                      {isBookmarked(tool.id) ? '★' : '☆'}
-                    </button>
-                  </div>
+                  <NavLink
+                    to={tool.path}
+                    onClick={onNavigate}
+                    className={({ isActive }) =>
+                      `group flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
+                        isActive
+                          ? 'bg-[var(--accent-muted)] text-[var(--text-primary)] border border-[var(--accent)]/35 shadow-[var(--shadow-card)]'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent hover:border-[var(--border)]'
+                      }`
+                    }
+                  >
+                    <span className="text-base w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-tertiary)] border border-[var(--border)] shrink-0">
+                      {tool.icon}
+                    </span>
+                    <span className="truncate">{tool.name}</span>
+                  </NavLink>
                 </li>
               ))}
             </ul>

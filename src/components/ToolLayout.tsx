@@ -53,7 +53,7 @@ export function ToolLayout({
 }: ToolLayoutProps) {
   const { add, toolHistory } = useHistory(toolId);
   const [toast, setToast] = useState<string | null>(null);
-  const { user, isDemo } = useAuth();
+  const { user, authProvider } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { copyShareLink, decodeShare } = useShareLink(toolId);
@@ -74,16 +74,16 @@ export function ToolLayout({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!user || isDemo) return;
+    if (!user || authProvider !== 'firebase') return;
     void logUserActivity(db, user.uid, {
       action: 'tool_opened',
       toolId,
       path: location.pathname,
     }).catch((e) => logDbError('logUserActivity:tool_opened', e));
-  }, [user, isDemo, toolId, location.pathname]);
+  }, [user, authProvider, toolId, location.pathname]);
 
   useEffect(() => {
-    if (!user || isDemo) return;
+    if (!user || authProvider !== 'firebase') return;
     const id = window.setTimeout(() => {
       const now = Date.now();
       if (now - lastInputLogRef.current < 10000) return;
@@ -98,7 +98,7 @@ export function ToolLayout({
       }).catch((e) => logDbError('logUserActivity:tool_data_used', e));
     }, 1400);
     return () => clearTimeout(id);
-  }, [input, output, user, isDemo, toolId]);
+  }, [input, output, user, authProvider, toolId]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -110,7 +110,7 @@ export function ToolLayout({
       const copied = await writeTextToClipboard(text);
       if (copied) {
         add({ toolId, input, output: text });
-        if (user && !isDemo) {
+        if (user && authProvider === 'firebase') {
           void logUserActivity(db, user.uid, {
             action: 'copy_clicked',
             toolId,
@@ -129,7 +129,7 @@ export function ToolLayout({
     const data = shareData ?? { input, output };
     try {
       await copyShareLink(data);
-      if (user && !isDemo) {
+      if (user && authProvider === 'firebase') {
         void logUserActivity(db, user.uid, {
           action: 'share_link_created',
           toolId,
@@ -149,7 +149,7 @@ export function ToolLayout({
         return;
       }
       onInputChange(text);
-      if (user && !isDemo) {
+      if (user && authProvider === 'firebase') {
         void logUserActivity(db, user.uid, {
           action: 'paste_clicked',
           toolId,
