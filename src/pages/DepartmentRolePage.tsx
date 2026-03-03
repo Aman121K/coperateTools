@@ -21,7 +21,7 @@ export function DepartmentRolePage() {
   const handleSave = () => {
     if (dept && roleId) {
       setProfile({ department: dept, roleId });
-      navigate('/tools/finance/currency', { replace: true });
+      navigate('/choose-tools', { replace: true });
     }
   };
 
@@ -37,7 +37,7 @@ export function DepartmentRolePage() {
             )}
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">Step 1 of 1</p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">Step 1 of 2</p>
             <h1 className="text-2xl font-semibold text-[var(--text-primary)] truncate">
               Set your workspace profile
             </h1>
@@ -133,7 +133,7 @@ export function DepartmentRolePage() {
           {profile && (
             <button
               type="button"
-              onClick={() => navigate('/tools/finance/currency', { replace: true })}
+              onClick={() => navigate('/choose-tools', { replace: true })}
               className="px-4 py-3.5 rounded-xl border border-[var(--border)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] font-medium"
             >
               Keep current

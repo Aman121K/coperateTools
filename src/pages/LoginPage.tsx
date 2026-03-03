@@ -8,7 +8,7 @@ export function LoginPage() {
   const { user, profile } = useAuth();
 
   useEffect(() => {
-    if (user && profile) navigate('/tools/finance/currency', { replace: true });
+    if (user && profile) navigate('/choose-tools', { replace: true });
     else if (user) navigate('/select-role', { replace: true });
   }, [user, profile, navigate]);
   const { signInWithGoogle, signInWithFacebook, signInWithGitHub, signInDemo } = useAuth();

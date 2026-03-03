@@ -7,6 +7,7 @@ import { CommandPalette } from './components/CommandPalette';
 import { useTheme } from './hooks/useTheme';
 import { LoginPage } from './pages/LoginPage';
 import { DepartmentRolePage } from './pages/DepartmentRolePage';
+import { ToolSelectionPage } from './pages/ToolSelectionPage';
 
 // JSON tools
 import { JsonFormatter } from './tools/json/JsonFormatter';
@@ -177,6 +178,11 @@ function AppContent() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/select-role" element={<DepartmentRolePage />} />
+      <Route path="/choose-tools" element={
+        <ProtectedRoute>
+          <ToolSelectionPage />
+        </ProtectedRoute>
+      } />
       <Route path="*" element={
         <ProtectedRoute>
           <div className="flex flex-col h-screen overflow-hidden bg-[var(--bg-primary)]">
@@ -227,7 +233,7 @@ function AppContent() {
               <div className="flex-1 flex flex-col min-w-0 overflow-auto p-0 sm:p-4">
               <div className="flex-1 rounded-none sm:rounded-2xl border-x-0 sm:border border-[var(--border)] bg-[var(--bg-secondary)]/65 backdrop-blur-sm sm:shadow-[var(--shadow-elevated)] overflow-hidden">
               <Routes>
-                <Route path="/" element={<Navigate to="/tools/finance/currency" replace />} />
+                <Route path="/" element={<Navigate to="/choose-tools" replace />} />
           <Route path="/tools/finance/currency" element={<CurrencyConverter />} />
           <Route path="/tools/finance/tax" element={<TaxCalculator />} />
           <Route path="/tools/finance/emi" element={<EmiCalculator />} />
@@ -332,7 +338,7 @@ function AppContent() {
           <Route path="/tools/json/flatten" element={<JsonFlatten />} />
           <Route path="/tools/json/types" element={<JsonToTypes />} />
           <Route path="/tools/json/csv" element={<JsonToCsv />} />
-                <Route path="*" element={<Navigate to="/tools/finance/currency" replace />} />
+                <Route path="*" element={<Navigate to="/choose-tools" replace />} />
               </Routes>
               </div>
               </div>
