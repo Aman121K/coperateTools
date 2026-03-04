@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const STORAGE_KEY = 'devtool-bookmarked-tools';
+const SYNC_EVENT = 'devtool-bookmarks-updated';
 
 function parseIds(value: string | null): string[] {
   if (!value) return [];
@@ -24,13 +25,21 @@ export function useToolBookmarks() {
         setBookmarkedIds(parseIds(event.newValue));
       }
     };
+    const handleSync = () => {
+      setBookmarkedIds(parseIds(localStorage.getItem(STORAGE_KEY)));
+    };
     window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+    window.addEventListener(SYNC_EVENT, handleSync);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener(SYNC_EVENT, handleSync);
+    };
   }, []);
 
   const persist = useCallback((nextIds: string[]) => {
     setBookmarkedIds(nextIds);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextIds));
+    window.dispatchEvent(new CustomEvent(SYNC_EVENT));
   }, []);
 
   const isBookmarked = useCallback(
