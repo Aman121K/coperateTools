@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { TOOLS, DEPARTMENTS } from '../data/tools';
 import { useAuth } from '../contexts/AuthContext';
 import { getToolsForProfile } from '../utils/toolAccess';
+import { useToolBookmarks } from '../hooks/useToolBookmarks';
 import type { Tool } from '../types';
 
 interface SidebarProps {
@@ -11,6 +12,7 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const { user, profile, signOut } = useAuth();
+  const { isBookmarked, toggleBookmark } = useToolBookmarks();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const tools = getToolsForProfile(TOOLS, profile);
@@ -109,26 +111,44 @@ export function Sidebar({ onNavigate }: SidebarProps) {
               {DEPARTMENTS[dept as keyof typeof DEPARTMENTS]}
             </h2>
             <ul className="space-y-1">
-              {tools.map((tool) => (
+              {tools.map((tool) => {
+                const bookmarked = isBookmarked(tool.id);
+                return (
                 <li key={tool.id}>
-                  <NavLink
-                    to={tool.path}
-                    onClick={onNavigate}
-                    className={({ isActive }) =>
-                      `group flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
-                        isActive
-                          ? 'bg-[var(--accent-muted)] text-[var(--text-primary)] border border-[var(--accent)]/35 shadow-[var(--shadow-card)]'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent hover:border-[var(--border)]'
-                      }`
-                    }
-                  >
-                    <span className="text-base w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-tertiary)] border border-[var(--border)] shrink-0">
-                      {tool.icon}
-                    </span>
-                    <span className="truncate">{tool.name}</span>
-                  </NavLink>
+                  <div className="group flex items-center gap-1.5">
+                    <NavLink
+                      to={tool.path}
+                      onClick={onNavigate}
+                      className={({ isActive }) =>
+                        `flex-1 flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-sm)] text-sm font-medium no-underline transition-all ${
+                          isActive
+                            ? 'bg-[var(--accent-muted)] text-[var(--text-primary)] border border-[var(--accent)]/35 shadow-[var(--shadow-card)]'
+                            : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] border border-transparent hover:border-[var(--border)]'
+                        }`
+                      }
+                    >
+                      <span className="text-base w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-tertiary)] border border-[var(--border)] shrink-0">
+                        {tool.icon}
+                      </span>
+                      <span className="truncate">{tool.name}</span>
+                    </NavLink>
+                    <button
+                      type="button"
+                      onClick={() => toggleBookmark(tool.id)}
+                      className={`h-8 w-8 shrink-0 rounded-[var(--radius-sm)] border transition-colors ${
+                        bookmarked
+                          ? 'border-[var(--accent)]/40 bg-[var(--accent-muted)] text-[var(--accent)]'
+                          : 'border-[var(--border)] bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                      }`}
+                      aria-label={bookmarked ? `Remove ${tool.name} bookmark` : `Bookmark ${tool.name}`}
+                      title={bookmarked ? 'Remove bookmark' : 'Bookmark tool'}
+                    >
+                      {bookmarked ? '★' : '☆'}
+                    </button>
+                  </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         ))}
