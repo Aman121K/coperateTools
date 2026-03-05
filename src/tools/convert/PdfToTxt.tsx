@@ -139,7 +139,12 @@ export function PdfToTxt() {
       setStatus(ocrResult ? 'OCR completed successfully.' : '');
       setError(ocrResult ? '' : 'OCR completed but no text could be recognized. Try a clearer scan or higher quality PDF.');
     } catch (e) {
-      setError((e as Error).message || 'Extraction failed');
+      const message = (e as Error).message || 'Extraction failed';
+      if (message.toLowerCase().includes('cdn') || message.toLowerCase().includes('load ocr engine')) {
+        setError('OCR engine could not be loaded. Check internet access to cdn.jsdelivr.net and try again.');
+      } else {
+        setError(message);
+      }
       setStatus('');
     } finally {
       setLoading(false);

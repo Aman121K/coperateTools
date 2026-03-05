@@ -18,6 +18,8 @@ export function PdfToImages() {
   const [scale, setScale] = useState(2);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
+  const [progress, setProgress] = useState<number | null>(null);
 
   useEffect(() => {
     return () => pages.forEach((p) => URL.revokeObjectURL(p.url));
@@ -27,6 +29,8 @@ export function PdfToImages() {
     if (!file) return;
     setLoading(true);
     setError('');
+    setStatus('');
+    setProgress(null);
     setPages([]);
     try {
       const data = await file.arrayBuffer();
@@ -42,11 +46,16 @@ export function PdfToImages() {
         if (match) {
           from = Math.max(1, parseInt(match[1], 10));
           to = match[2] ? Math.min(num, parseInt(match[2], 10)) : num;
+        } else {
+          throw new Error('Invalid page range. Use format like 1-5 or 1-.');
         }
       }
+      if (from > to) throw new Error('Invalid page range: start page must be less than or equal to end page.');
 
       const results: { url: string; pageNum: number }[] = [];
+      const count = to - from + 1;
       for (let i = from; i <= to; i++) {
+        setStatus(`Converting page ${i}/${to}...`);
         const page = await pdf.getPage(i);
         const viewport = page.getViewport({ scale });
         const canvas = document.createElement('canvas');
@@ -66,12 +75,17 @@ export function PdfToImages() {
           url: URL.createObjectURL(blob),
           pageNum: i,
         });
+        const done = i - from + 1;
+        setProgress(Math.round((done / count) * 100));
       }
       setPages(results);
+      setStatus(`Converted ${results.length} page${results.length > 1 ? 's' : ''}.`);
     } catch (e) {
       setError((e as Error).message);
+      setStatus('');
     } finally {
       setLoading(false);
+      setProgress(null);
     }
   };
 
@@ -128,6 +142,9 @@ export function PdfToImages() {
                 setFile(f ?? null);
                 setPages([]);
                 setTotalPages(0);
+                setError('');
+                setStatus('');
+                setProgress(null);
               }}
               className="block w-full text-sm text-[var(--text-secondary)] file:mr-4 file:py-2 file:px-4 file:rounded-[var(--radius-sm)] file:border-0 file:bg-[var(--accent)] file:text-white file:cursor-pointer"
             />
@@ -186,8 +203,15 @@ export function PdfToImages() {
           )}
         </div>
 
-        {error && (
-          <p className="text-sm text-[var(--error)]">⚠ {error}</p>
+        {error && <p className="text-sm text-[var(--error)]">⚠ {error}</p>}
+        {status && <p className="text-sm text-[var(--text-secondary)]">{status}</p>}
+        {loading && progress !== null && (
+          <div className="space-y-1">
+            <div className="h-2 rounded-full bg-[var(--bg-tertiary)] border border-[var(--border)] overflow-hidden">
+              <div className="h-full bg-[var(--accent)] transition-all duration-200" style={{ width: `${progress}%` }} />
+            </div>
+            <p className="text-xs text-[var(--text-muted)]">{progress}%</p>
+          </div>
         )}
 
         {pages.length > 0 && (
