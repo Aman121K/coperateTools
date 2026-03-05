@@ -6,6 +6,56 @@ import { extractReadablePageText } from '../../utils/pdfText';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
+type OcrResult = {
+  data?: {
+    text?: string;
+  };
+};
+
+type TesseractLike = {
+  recognize: (image: HTMLCanvasElement | string, language: string) => Promise<OcrResult>;
+};
+
+type WindowWithTesseract = Window & {
+  Tesseract?: TesseractLike;
+};
+
+function normalizeOcrText(value: string): string {
+  return value
+    .normalize('NFKC')
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+async function loadTesseractFromCdn(): Promise<TesseractLike> {
+  const w = window as WindowWithTesseract;
+  if (w.Tesseract) return w.Tesseract;
+
+  await new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector('script[data-ocr="tesseract"]') as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error('Failed to load OCR engine.')), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    script.async = true;
+    script.dataset.ocr = 'tesseract';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load OCR engine from CDN.'));
+    document.head.appendChild(script);
+  });
+
+  if (!w.Tesseract) {
+    throw new Error('OCR engine unavailable after loading.');
+  }
+  return w.Tesseract;
+}
+
 export function PdfToTxt() {
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState('');
@@ -35,10 +85,37 @@ export function PdfToTxt() {
         parts.push(pageText);
       }
       const result = parts.filter(Boolean).join('\n\n').trim();
-      setText(result);
-      if (!result) {
-        setError('No readable text layer found. This PDF is likely image-only; run OCR first to make it searchable.');
+      if (result) {
+        setText(result);
+        return;
       }
+
+      setError('No text layer found. Running OCR for scanned/image PDF (this can take some time)...');
+      const tesseract = await loadTesseractFromCdn();
+      const ocrParts: string[] = [];
+
+      for (let i = 1; i <= num; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        const context = canvas.getContext('2d');
+        if (!context) throw new Error('Unable to create canvas for OCR.');
+        await page.render({ canvas, canvasContext: context, viewport }).promise;
+
+        const ocr = await tesseract.recognize(canvas, 'eng');
+        const pageText = normalizeOcrText(ocr.data?.text ?? '');
+        if (pageText) ocrParts.push(pageText);
+      }
+
+      const ocrResult = ocrParts.join('\n\n').trim();
+      setText(ocrResult);
+      setError(
+        ocrResult
+          ? ''
+          : 'OCR completed but no text could be recognized. Try a clearer scan or higher quality PDF.'
+      );
     } catch (e) {
       setError((e as Error).message || 'Extraction failed');
     } finally {
@@ -58,7 +135,9 @@ export function PdfToTxt() {
       showCopyMinified={false}
     >
       <div className="max-w-lg space-y-6">
-        <p className="text-sm text-[var(--text-muted)]">Upload a PDF to extract its text content.</p>
+        <p className="text-sm text-[var(--text-muted)]">
+          Upload a PDF to extract text. If the PDF is scan/image-only, OCR fallback runs automatically.
+        </p>
         <input
           ref={inputRef}
           type="file"
