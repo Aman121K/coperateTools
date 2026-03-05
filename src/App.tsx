@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Sidebar } from './components/Sidebar';
@@ -159,6 +159,7 @@ function AppContent() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { theme, toggle } = useTheme();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
@@ -210,6 +211,16 @@ function AppContent() {
                   <span>🔍</span>
                   <span className="hidden md:inline">Quick Find</span>
                   <kbd className="hidden md:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-[10px] font-mono text-[var(--text-muted)]">⌘K</kbd>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/tools/general/suggestions')}
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:border-[var(--accent)]/35 transition-colors"
+                  title="Tool Suggestions"
+                  aria-label="Open tool suggestions"
+                >
+                  <span>⭐</span>
+                  <span className="hidden md:inline">Suggestions</span>
                 </button>
                 <button
                   type="button"
