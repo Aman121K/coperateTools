@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { DEPARTMENTS, TOOLS } from '../data/tools';
 import { getRolesForDepartment } from '../data/roles';
+import { getToolsForProfile } from '../utils/toolAccess';
 import type { Department } from '../types';
 
 export function DepartmentRolePage() {
@@ -17,6 +18,10 @@ export function DepartmentRolePage() {
 
   const roles = dept ? getRolesForDepartment(dept) : [];
   const deptList = Object.keys(DEPARTMENTS) as Department[];
+  const selectedToolCount = useMemo(() => {
+    if (!dept || !roleId) return 0;
+    return getToolsForProfile(TOOLS, { department: dept, roleId }).length;
+  }, [dept, roleId]);
 
   const handleSave = () => {
     if (dept && roleId) {
@@ -117,7 +122,11 @@ export function DepartmentRolePage() {
 
         {dept && roleId && (
           <p className="mt-5 text-sm text-[var(--text-secondary)]">
-            You will have access to <strong>all {TOOLS.length}+ tools</strong>. This helps us personalize default recommendations.
+            {dept === 'general' || roleId === 'general' ? (
+              <>You will have access to <strong>all {TOOLS.length}+ tools</strong>.</>
+            ) : (
+              <>You will see <strong>{selectedToolCount} tools</strong> for this department/role in your dashboard.</>
+            )}
           </p>
         )}
 
