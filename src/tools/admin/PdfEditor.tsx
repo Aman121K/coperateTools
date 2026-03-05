@@ -3,6 +3,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { ToolLayout } from '../../components/ToolLayout';
+import { extractReadablePageText } from '../../utils/pdfText';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -93,15 +94,15 @@ export function PdfEditor() {
       const nextPages: string[] = [];
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const text = content.items
-          .map((item) => ('str' in item ? item.str : ''))
-          .join(' ');
+        const text = await extractReadablePageText(page);
         nextPages.push(text);
       }
       setPages(nextPages);
       setSelectedPage(0);
       setVisualPage(1);
+      if (!nextPages.some((p) => p.trim().length > 0)) {
+        setError('No readable text layer found. This PDF may be image-only and needs OCR before text editing.');
+      }
     } catch (e) {
       setError((e as Error).message || 'Failed to parse PDF.');
     } finally {

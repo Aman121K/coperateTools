@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { ToolLayout } from '../../components/ToolLayout';
+import { extractReadablePageText } from '../../utils/pdfText';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -30,13 +31,14 @@ export function PdfToTxt() {
       const parts: string[] = [];
       for (let i = 1; i <= num; i++) {
         const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const pageText = content.items
-          .map((item) => ('str' in item ? item.str : ''))
-          .join(' ');
+        const pageText = await extractReadablePageText(page);
         parts.push(pageText);
       }
-      setText(parts.join('\n\n'));
+      const result = parts.filter(Boolean).join('\n\n').trim();
+      setText(result);
+      if (!result) {
+        setError('No readable text layer found. This PDF is likely image-only; run OCR first to make it searchable.');
+      }
     } catch (e) {
       setError((e as Error).message || 'Extraction failed');
     } finally {
