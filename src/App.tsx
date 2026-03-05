@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Sidebar } from './components/Sidebar';
@@ -160,6 +160,8 @@ function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { theme, toggle } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+  const onSuggestionsPage = location.pathname === '/tools/general/suggestions';
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
@@ -211,16 +213,6 @@ function AppContent() {
                   <span>🔍</span>
                   <span className="hidden md:inline">Quick Find</span>
                   <kbd className="hidden md:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-[10px] font-mono text-[var(--text-muted)]">⌘K</kbd>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/tools/general/suggestions')}
-                  className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:border-[var(--accent)]/35 transition-colors"
-                  title="Tool Suggestions"
-                  aria-label="Open tool suggestions"
-                >
-                  <span>⭐</span>
-                  <span className="hidden md:inline">Suggestions</span>
                 </button>
                 <button
                   type="button"
@@ -359,6 +351,18 @@ function AppContent() {
               </div>
             </main>
             </div>
+            {!onSuggestionsPage && (
+              <button
+                type="button"
+                onClick={() => navigate('/tools/general/suggestions')}
+                className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-[70] inline-flex items-center gap-2 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-4 py-3 text-sm font-semibold shadow-[0_12px_28px_rgba(0,0,0,0.25)] transition-all hover:translate-y-[-1px] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--accent)]"
+                title="Open tool suggestions"
+                aria-label="Open tool suggestions"
+              >
+                <span aria-hidden="true">⭐</span>
+                <span className="hidden sm:inline">Suggestions</span>
+              </button>
+            )}
             <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
           </div>
         </ProtectedRoute>

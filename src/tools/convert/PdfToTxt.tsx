@@ -12,8 +12,17 @@ type OcrResult = {
   };
 };
 
+type OcrProgress = {
+  status?: string;
+  progress?: number;
+};
+
 type TesseractLike = {
-  recognize: (image: HTMLCanvasElement | string, language: string) => Promise<OcrResult>;
+  recognize: (
+    image: HTMLCanvasElement | string,
+    language: string,
+    options?: { logger?: (progress: OcrProgress) => void }
+  ) => Promise<OcrResult>;
 };
 
 type WindowWithTesseract = Window & {
@@ -61,6 +70,8 @@ export function PdfToTxt() {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
+  const [ocrProgress, setOcrProgress] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,12 +79,16 @@ export function PdfToTxt() {
     setFile(f ?? null);
     setText('');
     setError('');
+    setStatus('');
+    setOcrProgress(null);
   };
 
   const extract = async () => {
     if (!file) return;
     setLoading(true);
     setError('');
+    setStatus('');
+    setOcrProgress(null);
     try {
       const data = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument(data).promise;
@@ -87,10 +102,11 @@ export function PdfToTxt() {
       const result = parts.filter(Boolean).join('\n\n').trim();
       if (result) {
         setText(result);
+        setStatus(`Extracted text from embedded PDF layer (${num} page${num > 1 ? 's' : ''}).`);
         return;
       }
 
-      setError('No text layer found. Running OCR for scanned/image PDF (this can take some time)...');
+      setStatus(`No text layer found. Running OCR on ${num} page${num > 1 ? 's' : ''}...`);
       const tesseract = await loadTesseractFromCdn();
       const ocrParts: string[] = [];
 
@@ -104,22 +120,30 @@ export function PdfToTxt() {
         if (!context) throw new Error('Unable to create canvas for OCR.');
         await page.render({ canvas, canvasContext: context, viewport }).promise;
 
-        const ocr = await tesseract.recognize(canvas, 'eng');
+        const ocr = await tesseract.recognize(canvas, 'eng', {
+          logger: (progress) => {
+            if (typeof progress.progress === 'number') {
+              const combined = ((i - 1) + progress.progress) / num;
+              setOcrProgress(Math.max(1, Math.min(99, Math.round(combined * 100))));
+            }
+          },
+        });
         const pageText = normalizeOcrText(ocr.data?.text ?? '');
         if (pageText) ocrParts.push(pageText);
+        setOcrProgress(Math.round((i / num) * 100));
+        setStatus(`OCR processing page ${i}/${num}...`);
       }
 
       const ocrResult = ocrParts.join('\n\n').trim();
       setText(ocrResult);
-      setError(
-        ocrResult
-          ? ''
-          : 'OCR completed but no text could be recognized. Try a clearer scan or higher quality PDF.'
-      );
+      setStatus(ocrResult ? 'OCR completed successfully.' : '');
+      setError(ocrResult ? '' : 'OCR completed but no text could be recognized. Try a clearer scan or higher quality PDF.');
     } catch (e) {
       setError((e as Error).message || 'Extraction failed');
+      setStatus('');
     } finally {
       setLoading(false);
+      setOcrProgress(null);
     }
   };
 
@@ -138,6 +162,9 @@ export function PdfToTxt() {
         <p className="text-sm text-[var(--text-muted)]">
           Upload a PDF to extract text. If the PDF is scan/image-only, OCR fallback runs automatically.
         </p>
+        <p className="text-xs text-[var(--text-muted)]">
+          OCR engine is loaded on demand from CDN and may take a few seconds on first use.
+        </p>
         <input
           ref={inputRef}
           type="file"
@@ -153,6 +180,15 @@ export function PdfToTxt() {
           {file ? file.name : 'Select PDF'}
         </button>
         {error && <p className="text-sm text-[var(--error)]">⚠ {error}</p>}
+        {status && <p className="text-sm text-[var(--text-secondary)]">{status}</p>}
+        {loading && ocrProgress !== null && (
+          <div className="space-y-1">
+            <div className="h-2 rounded-full bg-[var(--bg-tertiary)] border border-[var(--border)] overflow-hidden">
+              <div className="h-full bg-[var(--accent)] transition-all duration-200" style={{ width: `${ocrProgress}%` }} />
+            </div>
+            <p className="text-xs text-[var(--text-muted)]">{ocrProgress}%</p>
+          </div>
+        )}
         <button
           type="button"
           onClick={extract}
