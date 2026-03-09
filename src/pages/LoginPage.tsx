@@ -60,7 +60,7 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-8 sm:px-6 lg:px-10">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl items-stretch overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] shadow-[var(--shadow-elevated)] lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl items-stretch overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] shadow-[var(--shadow-elevated)] lg:grid-cols-[1.15fr_0.85fr] animate-fade-up">
         <section className="hidden lg:flex flex-col justify-between p-10 border-r border-[var(--border)] bg-[linear-gradient(165deg,#1a3855_0%,#101b2a_55%,#172538_100%)]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)]/65 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
@@ -95,11 +95,11 @@ export function LoginPage() {
               <div className="h-16 w-16 rounded-2xl border border-[var(--border)] bg-[var(--bg-tertiary)] flex items-center justify-center shadow-[var(--shadow-card)]">
                 <img src="/logo.png" alt="Corporate Tools" className="h-11 w-11 object-contain" />
               </div>
-              <h2 className="mt-4 text-2xl font-semibold text-[var(--text-primary)] text-center">
-                {mode === 'login' ? 'Sign in to DevTool' : 'Create your DevTool account'}
+            <h2 className="mt-4 text-2xl font-semibold text-[var(--text-primary)] text-center">
+                {mode === 'login' ? 'Sign in to DevTool' : 'Create your account'}
               </h2>
               <p className="text-sm text-[var(--text-muted)] text-center mt-2">
-                {mode === 'login' ? 'Login with Google or your username/email + password' : 'Sign up with name, username/email and password'}
+                {mode === 'login' ? 'Use Google SSO or your username/email and password.' : 'Register with your name, username/email, and a secure password.'}
               </p>
             </div>
 
@@ -116,7 +116,7 @@ export function LoginPage() {
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
-                Login
+                Sign in
               </button>
               <button
                 type="button"
@@ -130,7 +130,7 @@ export function LoginPage() {
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
               >
-                Sign Up
+                Register
               </button>
             </div>
 
@@ -190,7 +190,7 @@ export function LoginPage() {
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-semibold transition-colors disabled:opacity-60"
               >
-                {loading ? 'Please wait...' : mode === 'login' ? 'Login' : 'Create account'}
+                {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
               </button>
 
               <button
@@ -198,7 +198,7 @@ export function LoginPage() {
                 onClick={signInDemo}
                 className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl border border-[var(--border)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] font-semibold transition-colors"
               >
-                Continue as Guest
+                Continue with Demo Workspace
               </button>
             </div>
 

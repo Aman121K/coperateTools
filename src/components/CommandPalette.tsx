@@ -71,7 +71,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tools... Try: PDF, remove bg, BMI, tip, JSON"
+            placeholder="Search tools... Try: invoice, PDF, remove background, tax, JSON"
             className="flex-1 bg-transparent outline-none text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-base"
           />
           <kbd className="hidden sm:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-xs text-[var(--text-muted)]">

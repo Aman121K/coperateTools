@@ -25,7 +25,7 @@ function ToolCard({
   onToggleBookmark: (toolId: string) => void;
 }) {
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] p-4 sm:p-5 shadow-[var(--shadow-card)] transition-all hover:border-[var(--accent)]/45 hover:-translate-y-0.5">
+    <div className="rounded-2xl border border-[var(--border)] bg-[linear-gradient(180deg,var(--bg-secondary),rgba(27,42,62,0.88))] p-4 sm:p-5 shadow-[var(--shadow-card)] transition-all hover:border-[var(--accent)]/45 hover:-translate-y-0.5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <span className="w-11 h-11 rounded-xl border border-[var(--border)] bg-[var(--bg-tertiary)] flex items-center justify-center text-xl shrink-0">
@@ -94,13 +94,13 @@ export function ToolSelectionPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-6 sm:px-6 sm:py-8">
-      <div className="mx-auto max-w-7xl rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5 sm:p-8 shadow-[var(--shadow-elevated)]">
+      <div className="mx-auto max-w-7xl rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5 sm:p-8 shadow-[var(--shadow-elevated)] animate-fade-up">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">Step 2 of 2</p>
             <h1 className="mt-1 text-2xl sm:text-3xl font-semibold text-[var(--text-primary)]">Choose your tools</h1>
             <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              {user?.displayName || user?.email || 'User'}, bookmark the tools you use most and open any tool to enter the home workspace.
+              {user?.displayName || user?.email || 'User'}, save the tools you use most and launch any tool to enter the main workspace.
             </p>
           </div>
           <div className="w-full sm:max-w-sm">
@@ -128,7 +128,7 @@ export function ToolSelectionPage() {
                   id={tool.id}
                   name={tool.name}
                   icon={tool.icon}
-                  department={DEPARTMENTS[tool.department as keyof typeof DEPARTMENTS]}
+                  department={DEPARTMENTS[tool.department as keyof typeof DEPARTMENTS] ?? tool.department}
                   path={tool.path}
                   onOpen={openTool}
                   bookmarked
@@ -158,7 +158,7 @@ export function ToolSelectionPage() {
                   id={tool.id}
                   name={tool.name}
                   icon={tool.icon}
-                  department={DEPARTMENTS[tool.department as keyof typeof DEPARTMENTS]}
+                  department={DEPARTMENTS[tool.department as keyof typeof DEPARTMENTS] ?? tool.department}
                   path={tool.path}
                   onOpen={openTool}
                   bookmarked={bookmarkedIdSet.has(tool.id)}

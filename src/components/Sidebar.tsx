@@ -30,7 +30,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
             <img src="/logo.png" alt="Corporate Tools" className="h-9 w-9 object-contain shrink-0" />
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">Hub</p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">Workspace</p>
             <p className="text-sm font-semibold text-[var(--text-primary)] truncate">Internal Tools Hub</p>
           </div>
         </div>
@@ -40,9 +40,9 @@ export function Sidebar({ onNavigate }: SidebarProps) {
           onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
         >
           <span className="text-[var(--text-muted)]">🔍</span>
-          <span className="flex-1 text-sm text-[var(--text-secondary)]">Search a tool or feature</span>
+          <span className="flex-1 text-sm text-[var(--text-secondary)]">Search tools, features, or actions</span>
           <kbd className="hidden sm:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] font-mono text-[10px] text-[var(--text-muted)]">
-            ⌘K
+            Ctrl+F
           </kbd>
         </button>
         {user && (
@@ -87,7 +87,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
                   }}
                   className="w-full text-left px-3 py-2.5 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]"
                 >
-                  ⚙ Change Role
+                  ⚙ Update Profile
                 </button>
                 <button
                   type="button"

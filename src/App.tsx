@@ -165,7 +165,7 @@ function AppContent() {
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if (e.ctrlKey && e.key.toLowerCase() === 'f') {
         e.preventDefault();
         setPaletteOpen((o) => !o);
       }
@@ -202,7 +202,7 @@ function AppContent() {
               </button>
               <div className="flex-1 min-w-0">
                 <h1 className="text-sm sm:text-base font-semibold tracking-wide text-[var(--text-primary)] truncate">Internal Tools Hub</h1>
-                <p className="hidden sm:block text-xs text-[var(--text-muted)]">Fast internal tools for your daily operations</p>
+                <p className="hidden sm:block text-xs text-[var(--text-muted)]">Professional internal tools for daily operations</p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -211,8 +211,8 @@ function AppContent() {
                   className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border)] hover:border-[var(--accent)]/35 transition-colors"
                 >
                   <span>🔍</span>
-                  <span className="hidden md:inline">Quick Find</span>
-                  <kbd className="hidden md:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-[10px] font-mono text-[var(--text-muted)]">⌘K</kbd>
+                  <span className="hidden md:inline">Quick Search</span>
+                  <kbd className="hidden md:inline px-2 py-1 rounded bg-[var(--bg-secondary)] border border-[var(--border)] text-[10px] font-mono text-[var(--text-muted)]">Ctrl+F</kbd>
                 </button>
                 <button
                   type="button"
@@ -360,7 +360,7 @@ function AppContent() {
                 aria-label="Open tool suggestions"
               >
                 <span aria-hidden="true">⭐</span>
-                <span className="hidden sm:inline">Suggestions</span>
+                <span className="hidden sm:inline">Request Tool</span>
               </button>
             )}
             <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />

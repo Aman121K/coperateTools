@@ -118,9 +118,9 @@ export function ToolLayout({
             outputLength: text.length,
           }).catch((e) => logDbError('logUserActivity:copy_clicked', e));
         }
-        showToast('Copied to clipboard!');
+        showToast('Copied to clipboard.');
       } else {
-        showToast('Unable to copy. Please use keyboard copy.');
+        showToast('Unable to copy. Please use your keyboard shortcut.');
       }
     }
   };
@@ -135,9 +135,9 @@ export function ToolLayout({
           toolId,
         }).catch((e) => logDbError('logUserActivity:share_link_created', e));
       }
-      showToast('Share link copied! Send to anyone to open the same state.');
+      showToast('Share link copied. Anyone with the link can open this state.');
     } catch {
-      showToast('Unable to copy share link.');
+      showToast('Unable to copy the share link.');
     }
   };
 
@@ -157,9 +157,9 @@ export function ToolLayout({
           inputLength: text.length,
         }).catch((e) => logDbError('logUserActivity:paste_clicked', e));
       }
-      showToast('Pasted from clipboard!');
+      showToast('Pasted from clipboard.');
     } catch {
-      showToast('Unable to read clipboard. Use keyboard paste.');
+      showToast('Unable to read clipboard. Please use your keyboard shortcut.');
     }
   };
 
@@ -168,10 +168,10 @@ export function ToolLayout({
       const text = output || input;
       const parsed = JSON.parse(text);
       const copied = await writeTextToClipboard(JSON.stringify(parsed));
-      showToast(copied ? 'Copied minified JSON!' : 'Unable to copy.');
+      showToast(copied ? 'Copied minified JSON.' : 'Unable to copy.');
     } catch {
       const copied = await writeTextToClipboard(output || input);
-      showToast(copied ? 'Copied to clipboard!' : 'Unable to copy.');
+      showToast(copied ? 'Copied to clipboard.' : 'Unable to copy.');
     }
   };
 
@@ -182,7 +182,7 @@ export function ToolLayout({
     a.download = filename;
     a.click();
     URL.revokeObjectURL(a.href);
-    showToast('Download started!');
+    showToast('Download started.');
   };
 
   const hasJsonOutput = () => {

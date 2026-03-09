@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { DEPARTMENTS, TOOLS } from '../data/tools';
@@ -9,10 +9,6 @@ import type { Department } from '../types';
 export function DepartmentRolePage() {
   const navigate = useNavigate();
   const { user, profile, setProfile } = useAuth();
-
-  useEffect(() => {
-    if (!user) navigate('/login', { replace: true });
-  }, [user, navigate]);
   const [dept, setDept] = useState<Department | null>(profile?.department ?? null);
   const [roleId, setRoleId] = useState<string | null>(profile?.roleId ?? null);
 
@@ -32,7 +28,7 @@ export function DepartmentRolePage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-8 sm:px-6">
-      <div className="mx-auto w-full max-w-4xl rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6 sm:p-8 shadow-[var(--shadow-elevated)]">
+      <div className="mx-auto w-full max-w-4xl rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6 sm:p-8 shadow-[var(--shadow-elevated)] animate-fade-up">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
           <div className="h-14 w-14 rounded-2xl border border-[var(--border)] bg-[var(--bg-tertiary)] flex items-center justify-center">
             {user?.photoURL ? (
@@ -44,10 +40,10 @@ export function DepartmentRolePage() {
           <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">Step 1 of 2</p>
             <h1 className="text-2xl font-semibold text-[var(--text-primary)] truncate">
-              Set your workspace profile
+              Set up your workspace profile
             </h1>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
-              Welcome {user?.displayName || user?.email || 'User'}. Choose department and role for a better default experience.
+              Welcome {user?.displayName || user?.email || 'User'}. Select the department and role that best match your work. You can change this later.
             </p>
           </div>
         </div>
@@ -66,7 +62,7 @@ export function DepartmentRolePage() {
             }`}
           >
             <span>📂</span>
-            <span>Browse all tools ({TOOLS.length}+ available)</span>
+            <span>Browse all tools ({TOOLS.length} available)</span>
           </button>
 
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-tertiary)]/45 p-4 sm:p-5">
@@ -123,9 +119,9 @@ export function DepartmentRolePage() {
         {dept && roleId && (
           <p className="mt-5 text-sm text-[var(--text-secondary)]">
             {dept === 'general' || roleId === 'general' ? (
-              <>You will have access to <strong>all {TOOLS.length}+ tools</strong>.</>
+              <>You will have access to <strong>all {TOOLS.length} tools</strong>.</>
             ) : (
-              <>You will see <strong>{selectedToolCount} tools</strong> for this department/role in your dashboard.</>
+              <>You will see <strong>{selectedToolCount} tools</strong> for this department and role in your dashboard.</>
             )}
           </p>
         )}
@@ -145,7 +141,7 @@ export function DepartmentRolePage() {
               onClick={() => navigate('/choose-tools', { replace: true })}
               className="px-4 py-3.5 rounded-xl border border-[var(--border)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] font-medium"
             >
-              Keep current
+              Keep current profile
             </button>
           )}
         </div>
