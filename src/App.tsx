@@ -5,10 +5,19 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Sidebar } from './components/Sidebar';
 import { CommandPalette } from './components/CommandPalette';
 import { BookmarksBar } from './components/BookmarksBar';
+import { ToolErrorBoundary } from './components/ToolErrorBoundary';
+import { SiteFooter } from './components/SiteFooter';
 import { useTheme } from './hooks/useTheme';
 import { LoginPage } from './pages/LoginPage';
 import { DepartmentRolePage } from './pages/DepartmentRolePage';
 import { ToolSelectionPage } from './pages/ToolSelectionPage';
+import { TermsPage } from './pages/site/TermsPage';
+import { PrivacyPage } from './pages/site/PrivacyPage';
+import { CookiePolicyPage } from './pages/site/CookiePolicyPage';
+import { AcceptableUsePage } from './pages/site/AcceptableUsePage';
+import { DisclaimerPage } from './pages/site/DisclaimerPage';
+import { AboutPage } from './pages/site/AboutPage';
+import { ContactPage } from './pages/site/ContactPage';
 
 // JSON tools
 import { JsonFormatter } from './tools/json/JsonFormatter';
@@ -183,6 +192,13 @@ function AppContent() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/select-role" element={<DepartmentRolePage />} />
+      <Route path="/terms-and-conditions" element={<TermsPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPage />} />
+      <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+      <Route path="/acceptable-use-policy" element={<AcceptableUsePage />} />
+      <Route path="/disclaimer" element={<DisclaimerPage />} />
+      <Route path="/about-us" element={<AboutPage />} />
+      <Route path="/contact-us" element={<ContactPage />} />
       <Route path="/choose-tools" element={
         <ProtectedRoute>
           <ToolSelectionPage />
@@ -201,8 +217,8 @@ function AppContent() {
                 <span className="text-xl">{sidebarOpen ? '✕' : '☰'}</span>
               </button>
               <div className="flex-1 min-w-0">
-                <h1 className="text-sm sm:text-base font-semibold tracking-wide text-[var(--text-primary)] truncate">Internal Tools Hub</h1>
-                <p className="hidden sm:block text-xs text-[var(--text-muted)]">Professional internal tools for daily operations</p>
+                <h1 className="text-sm sm:text-base font-semibold tracking-wide text-[var(--text-primary)] truncate">DevTool Global Workspace</h1>
+                <p className="hidden sm:block text-xs text-[var(--text-muted)]">Fast and reliable tools for teams and individual users</p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -238,6 +254,7 @@ function AppContent() {
               <main className="flex-1 overflow-hidden flex flex-col min-w-0">
               <div className="flex-1 flex flex-col min-w-0 overflow-auto p-0 sm:p-4">
               <div className="flex-1 rounded-none sm:rounded-2xl border-x-0 sm:border border-[var(--border)] bg-[var(--bg-secondary)]/65 backdrop-blur-sm sm:shadow-[var(--shadow-elevated)] overflow-hidden">
+              <ToolErrorBoundary key={location.pathname}>
               <Routes>
                 <Route path="/" element={<Navigate to="/choose-tools" replace />} />
           <Route path="/tools/finance/currency" element={<CurrencyConverter />} />
@@ -347,10 +364,12 @@ function AppContent() {
           <Route path="/tools/json/csv" element={<JsonToCsv />} />
                 <Route path="*" element={<Navigate to="/choose-tools" replace />} />
               </Routes>
+              </ToolErrorBoundary>
               </div>
               </div>
             </main>
             </div>
+            <SiteFooter />
             {!onSuggestionsPage && (
               <button
                 type="button"

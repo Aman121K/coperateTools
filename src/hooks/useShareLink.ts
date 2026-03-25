@@ -4,16 +4,31 @@ import { writeTextToClipboard } from '../utils/clipboard';
 
 const SHARE_PREFIX = 'share=';
 
+function encodeBase64Url(value: string): string {
+  const bytes = new TextEncoder().encode(value);
+  let binary = '';
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeBase64Url(value: string): string {
+  const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
 function encodeShare(toolId: string, data: object): string {
   const payload = JSON.stringify({ toolId, ...data });
-  return btoa(encodeURIComponent(payload));
+  return encodeBase64Url(payload);
 }
 
 function decodeShare(hash: string): { toolId: string; data: Record<string, unknown> } | null {
   try {
-    const match = hash.match(new RegExp(SHARE_PREFIX + '([A-Za-z0-9+/=]+)'));
+    const match = hash.match(new RegExp(SHARE_PREFIX + '([A-Za-z0-9+/_=-]+)'));
     if (!match) return null;
-    const payload = JSON.parse(decodeURIComponent(atob(match[1])));
+    const payload = JSON.parse(decodeBase64Url(match[1]));
     const { toolId, ...data } = payload;
     return toolId ? { toolId, data } : null;
   } catch {

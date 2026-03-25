@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Editor } from './Editor';
 import { useHistory } from '../hooks/useHistory';
@@ -32,6 +32,38 @@ interface ToolLayoutProps {
   onRestoreFromShare?: (data: Record<string, unknown>) => void;
 }
 
+interface DownloadMeta {
+  filename: string;
+  mime: string;
+}
+
+function getDownloadMeta(language: string): DownloadMeta {
+  switch (language) {
+    case 'json':
+      return { filename: 'output.json', mime: 'application/json' };
+    case 'xml':
+      return { filename: 'output.xml', mime: 'application/xml' };
+    case 'html':
+      return { filename: 'output.html', mime: 'text/html' };
+    case 'yaml':
+    case 'yml':
+      return { filename: 'output.yaml', mime: 'application/yaml' };
+    case 'csv':
+      return { filename: 'output.csv', mime: 'text/csv' };
+    case 'typescript':
+      return { filename: 'output.ts', mime: 'text/plain' };
+    case 'javascript':
+      return { filename: 'output.js', mime: 'text/javascript' };
+    case 'markdown':
+      return { filename: 'output.md', mime: 'text/markdown' };
+    case 'bash':
+    case 'shell':
+      return { filename: 'output.sh', mime: 'text/plain' };
+    default:
+      return { filename: 'output.txt', mime: 'text/plain' };
+  }
+}
+
 export function ToolLayout({
   title,
   description,
@@ -53,6 +85,8 @@ export function ToolLayout({
 }: ToolLayoutProps) {
   const { add, toolHistory } = useHistory(toolId);
   const [toast, setToast] = useState<string | null>(null);
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
+  const [fullscreenJsonFormat, setFullscreenJsonFormat] = useState<'raw' | 'pretty' | 'minified'>('raw');
   const { user, authProvider } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -99,6 +133,24 @@ export function ToolLayout({
     }, 1400);
     return () => clearTimeout(id);
   }, [input, output, user, authProvider, toolId]);
+
+  const activeText = output || input;
+  const activeLanguage = output ? outputLanguage : inputLanguage;
+  const parsedActiveJson = useMemo(() => {
+    if (!activeText) return null;
+    try {
+      return JSON.parse(activeText);
+    } catch {
+      return null;
+    }
+  }, [activeText]);
+
+  const fullscreenText = useMemo(() => {
+    if (!parsedActiveJson) return activeText;
+    if (fullscreenJsonFormat === 'pretty') return JSON.stringify(parsedActiveJson, null, 2);
+    if (fullscreenJsonFormat === 'minified') return JSON.stringify(parsedActiveJson);
+    return activeText;
+  }, [activeText, parsedActiveJson, fullscreenJsonFormat]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -175,6 +227,16 @@ export function ToolLayout({
     }
   };
 
+  const handleOpenFullscreen = () => {
+    const text = output || input;
+    if (!text) {
+      showToast('Nothing to preview.');
+      return;
+    }
+    setFullscreenJsonFormat(parsedActiveJson ? 'pretty' : 'raw');
+    setIsFullscreenOpen(true);
+  };
+
   const handleDownload = (filename: string, content: string, mime: string) => {
     const blob = new Blob([content], { type: mime });
     const a = document.createElement('a');
@@ -183,6 +245,30 @@ export function ToolLayout({
     a.click();
     URL.revokeObjectURL(a.href);
     showToast('Download started.');
+  };
+
+  useEffect(() => {
+    if (!isFullscreenOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsFullscreenOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isFullscreenOpen]);
+
+  const handleClear = () => {
+    onInputChange('');
+    showToast('Cleared input.');
+  };
+
+  const handleDownloadCurrent = () => {
+    const content = output || input;
+    if (!content) {
+      showToast('Nothing to download.');
+      return;
+    }
+    const meta = getDownloadMeta(output ? outputLanguage : inputLanguage);
+    handleDownload(meta.filename, content, meta.mime);
   };
 
   const hasJsonOutput = () => {
@@ -222,6 +308,14 @@ export function ToolLayout({
             <span>📥</span>
             <span className="hidden sm:inline">Paste</span>
           </button>
+          <button
+            onClick={handleClear}
+            title="Clear input"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium whitespace-nowrap rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+          >
+            <span>🧹</span>
+            <span className="hidden sm:inline">Clear</span>
+          </button>
           {showCopyMinified && hasJsonOutput() && (
             <button
               onClick={handleCopyMinified}
@@ -234,7 +328,7 @@ export function ToolLayout({
           )}
           {showDownload && (
             <button
-              onClick={() => handleDownload('output.json', output || input, 'application/json')}
+              onClick={handleDownloadCurrent}
               title="Download"
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium whitespace-nowrap rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
             >
@@ -242,6 +336,14 @@ export function ToolLayout({
               <span className="hidden sm:inline">Download</span>
             </button>
           )}
+          <button
+            onClick={handleOpenFullscreen}
+            title="Open full-screen output"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium whitespace-nowrap rounded-[var(--radius-sm)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border)] transition-colors"
+          >
+            <span>⛶</span>
+            <span className="hidden sm:inline">Fullscreen</span>
+          </button>
           <button
             onClick={handleShare}
             title="Share link"
@@ -292,6 +394,77 @@ export function ToolLayout({
           </div>
         )}
       </div>
+      {isFullscreenOpen && (
+        <div className="fixed inset-0 z-[95] bg-[var(--bg-primary)]/95 backdrop-blur-sm p-3 sm:p-6">
+          <div className="h-full rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] shadow-[var(--shadow-elevated)] flex flex-col">
+            <div className="shrink-0 flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] px-4 py-3">
+              <div className="min-w-0">
+                <p className="text-xs uppercase tracking-[0.13em] text-[var(--text-muted)]">Fullscreen Viewer</p>
+                <p className="text-sm font-medium text-[var(--text-primary)] truncate">{title} - {activeText.length.toLocaleString()} chars</p>
+              </div>
+              <div className="flex items-center gap-2">
+                {parsedActiveJson && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenJsonFormat('pretty')}
+                      className={`px-3 py-1.5 rounded-[var(--radius-sm)] border text-xs font-medium ${
+                        fullscreenJsonFormat === 'pretty'
+                          ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                          : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--border)]'
+                      }`}
+                    >
+                      Pretty JSON
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenJsonFormat('minified')}
+                      className={`px-3 py-1.5 rounded-[var(--radius-sm)] border text-xs font-medium ${
+                        fullscreenJsonFormat === 'minified'
+                          ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                          : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--border)]'
+                      }`}
+                    >
+                      Minified
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenJsonFormat('raw')}
+                      className={`px-3 py-1.5 rounded-[var(--radius-sm)] border text-xs font-medium ${
+                        fullscreenJsonFormat === 'raw'
+                          ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                          : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--border)]'
+                      }`}
+                    >
+                      Raw
+                    </button>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const meta = getDownloadMeta(activeLanguage);
+                    handleDownload(meta.filename, fullscreenText, meta.mime);
+                  }}
+                  className="px-3 py-1.5 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-medium"
+                >
+                  Download
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsFullscreenOpen(false)}
+                  className="px-3 py-1.5 rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-medium"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 min-h-0 p-3 sm:p-4">
+              <Editor value={fullscreenText} onChange={() => {}} language={activeLanguage} height="100%" readOnly />
+            </div>
+          </div>
+        </div>
+      )}
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );

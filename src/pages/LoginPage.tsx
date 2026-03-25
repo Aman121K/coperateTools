@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { isFirebaseConfigured } from '../config/firebase';
+import { SiteFooter } from '../components/SiteFooter';
 
 type AuthMode = 'login' | 'signup';
 
@@ -59,7 +60,8 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-8 sm:px-6 lg:px-10">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
+      <main className="flex-1 px-4 py-8 sm:px-6 lg:px-10">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl items-stretch overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] shadow-[var(--shadow-elevated)] lg:grid-cols-[1.15fr_0.85fr] animate-fade-up">
         <section className="hidden lg:flex flex-col justify-between p-10 border-r border-[var(--border)] bg-[linear-gradient(165deg,#1a3855_0%,#101b2a_55%,#172538_100%)]">
           <div>
@@ -214,6 +216,8 @@ export function LoginPage() {
           </div>
         </section>
       </div>
+      </main>
+      <SiteFooter />
     </div>
   );
 }

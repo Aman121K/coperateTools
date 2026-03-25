@@ -21,8 +21,22 @@ export interface ActivityEvent {
   [key: string]: Primitive;
 }
 
+interface VisitorGeo {
+  ipAddress: string | null;
+  country: string | null;
+  countryCode: string | null;
+  region: string | null;
+  city: string | null;
+  timezone: string | null;
+  locationName: string | null;
+  geoProvider: string | null;
+}
+
 const MAX_TEXT_LEN = 1200;
 const FILE_LIKE_PATTERNS = [/^data:image\//i, /^data:application\/pdf/i, /^blob:/i];
+const GEO_CACHE_KEY = 'devtool_geo_v1';
+const GEO_LOGGING_ENABLED = import.meta.env.VITE_ENABLE_GEO_LOGGING !== 'false';
+let geoPromise: Promise<VisitorGeo> | null = null;
 
 function sanitizeText(value: unknown): string | null {
   if (typeof value !== 'string') return null;
@@ -50,6 +64,105 @@ function sanitizeEvent(event: ActivityEvent): Record<string, Primitive> {
     }
   }
   return safe;
+}
+
+function normalizeGeo(payload: unknown, provider: string): VisitorGeo | null {
+  if (!payload || typeof payload !== 'object') return null;
+  const row = payload as Record<string, unknown>;
+  const ip = row.ip;
+  const country = row.country_name ?? row.country;
+  const countryCode = row.country_code ?? row.country_code2;
+  const region = row.region ?? row.region_name ?? null;
+  const city = row.city ?? null;
+  const timezone = row.timezone ?? row.time_zone ?? null;
+
+  const safeCountry = typeof country === 'string' ? sanitizeText(country) : null;
+  const safeRegion = typeof region === 'string' ? sanitizeText(region) : null;
+  const safeCity = typeof city === 'string' ? sanitizeText(city) : null;
+  const locationName = [safeCity, safeRegion, safeCountry].filter(Boolean).join(', ') || null;
+
+  return {
+    ipAddress: typeof ip === 'string' ? sanitizeText(ip) : null,
+    country: safeCountry,
+    countryCode: typeof countryCode === 'string' ? sanitizeText(countryCode)?.toUpperCase() ?? null : null,
+    region: safeRegion,
+    city: safeCity,
+    timezone: typeof timezone === 'string' ? sanitizeText(timezone) : null,
+    locationName,
+    geoProvider: provider,
+  };
+}
+
+async function fetchJson(url: string, timeoutMs = 3500): Promise<unknown> {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchVisitorGeo(): Promise<VisitorGeo> {
+  if (!GEO_LOGGING_ENABLED || typeof window === 'undefined') {
+    return {
+      ipAddress: null,
+      country: null,
+      countryCode: null,
+      region: null,
+      city: null,
+      timezone: null,
+      locationName: null,
+      geoProvider: null,
+    };
+  }
+
+  try {
+    const cached = sessionStorage.getItem(GEO_CACHE_KEY);
+    if (cached) return JSON.parse(cached) as VisitorGeo;
+  } catch {
+    // ignore bad cache and refetch
+  }
+
+  const urls = [
+    { url: import.meta.env.VITE_GEO_ENDPOINT || 'https://ipapi.co/json/', provider: 'ipapi.co' },
+    { url: 'https://ipwho.is/', provider: 'ipwho.is' },
+  ];
+
+  for (const candidate of urls) {
+    const data = await fetchJson(candidate.url);
+    const normalized = normalizeGeo(data, candidate.provider);
+    if (normalized) {
+      try {
+        sessionStorage.setItem(GEO_CACHE_KEY, JSON.stringify(normalized));
+      } catch {
+        // best-effort cache
+      }
+      return normalized;
+    }
+  }
+
+  return {
+    ipAddress: null,
+    country: null,
+    countryCode: null,
+    region: null,
+    city: null,
+    timezone: null,
+    locationName: null,
+    geoProvider: null,
+  };
+}
+
+async function getVisitorGeo(): Promise<VisitorGeo> {
+  if (!geoPromise) {
+    geoPromise = fetchVisitorGeo();
+  }
+  return geoPromise;
 }
 
 function userNode(uid: string) {
@@ -82,9 +195,11 @@ export async function upsertUserProfile(
 export async function logUserActivity(db: Database | null, uid: string, event: ActivityEvent) {
   if (!db || !uid || uid === 'demo-user') return;
   const safe = sanitizeEvent(event);
+  const geo = await getVisitorGeo();
   const itemRef = push(ref(db, activitiesNode(uid)));
   await set(itemRef, {
     ...safe,
+    ...geo,
     createdAt: Date.now(),
   });
 }

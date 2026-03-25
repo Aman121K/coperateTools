@@ -4,6 +4,7 @@ import { DEPARTMENTS, TOOLS } from '../data/tools';
 import { useAuth } from '../contexts/AuthContext';
 import { useToolBookmarks } from '../hooks/useToolBookmarks';
 import { getToolsForProfile } from '../utils/toolAccess';
+import { SiteFooter } from '../components/SiteFooter';
 
 function ToolCard({
   id,
@@ -93,7 +94,8 @@ export function ToolSelectionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-6 sm:px-6 sm:py-8">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
+      <main className="flex-1 px-4 py-6 sm:px-6 sm:py-8">
       <div className="mx-auto max-w-7xl rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5 sm:p-8 shadow-[var(--shadow-elevated)] animate-fade-up">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -169,6 +171,8 @@ export function ToolSelectionPage() {
           )}
         </section>
       </div>
+      </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { DEPARTMENTS, TOOLS } from '../data/tools';
 import { getRolesForDepartment } from '../data/roles';
 import { getToolsForProfile } from '../utils/toolAccess';
 import type { Department } from '../types';
+import { SiteFooter } from '../components/SiteFooter';
 
 export function DepartmentRolePage() {
   const navigate = useNavigate();
@@ -27,7 +28,8 @@ export function DepartmentRolePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
+      <main className="flex-1 px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-4xl rounded-3xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6 sm:p-8 shadow-[var(--shadow-elevated)] animate-fade-up">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
           <div className="h-14 w-14 rounded-2xl border border-[var(--border)] bg-[var(--bg-tertiary)] flex items-center justify-center">
@@ -146,6 +148,8 @@ export function DepartmentRolePage() {
           )}
         </div>
       </div>
+      </main>
+      <SiteFooter />
     </div>
   );
 }
