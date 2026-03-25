@@ -251,9 +251,9 @@ function AppContent() {
               <aside className={`fixed md:relative top-14 sm:top-16 bottom-0 md:top-auto md:bottom-auto left-0 md:left-auto z-50 md:z-auto w-[86vw] max-w-72 md:w-64 md:min-w-64 lg:w-72 lg:min-w-72 md:h-full flex-shrink-0 transform transition-transform duration-200 ease-out md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-[105%] md:translate-x-0'}`}>
                 <Sidebar onNavigate={() => setSidebarOpen(false)} />
               </aside>
-              <main className="flex-1 overflow-hidden flex flex-col min-w-0">
-              <div className="flex-1 flex flex-col min-w-0 overflow-auto p-0 sm:p-4">
-              <div className="flex-1 rounded-none sm:rounded-2xl border-x-0 sm:border border-[var(--border)] bg-[var(--bg-secondary)]/65 backdrop-blur-sm sm:shadow-[var(--shadow-elevated)] overflow-hidden">
+              <main className="flex-1 min-w-0 overflow-y-auto">
+              <div className="flex min-h-full flex-col p-0 sm:p-4">
+              <div className="flex-1 min-h-[560px] rounded-none sm:rounded-2xl border-x-0 sm:border border-[var(--border)] bg-[var(--bg-secondary)]/65 backdrop-blur-sm sm:shadow-[var(--shadow-elevated)] overflow-hidden">
               <ToolErrorBoundary key={location.pathname}>
               <Routes>
                 <Route path="/" element={<Navigate to="/choose-tools" replace />} />
@@ -367,9 +367,11 @@ function AppContent() {
               </ToolErrorBoundary>
               </div>
               </div>
-            </main>
+              <div className="mt-4 sm:mt-6">
+                <SiteFooter />
+              </div>
+              </main>
             </div>
-            <SiteFooter />
             {!onSuggestionsPage && (
               <button
                 type="button"
