@@ -69,10 +69,10 @@ export function LoginPage() {
               DevTool Platform
             </div>
             <h1 className="mt-6 text-4xl leading-tight font-semibold text-[var(--text-primary)]">
-              Internal tools with a cleaner workflow for every team.
+              Powerful online tools with a cleaner workflow for every user.
             </h1>
             <p className="mt-4 max-w-xl text-base text-[var(--text-secondary)]">
-              One secure workspace for converters, calculators, media utilities, and daily operations tasks.
+              One reliable workspace for converters, calculators, media utilities, and day-to-day productivity tasks.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-3">

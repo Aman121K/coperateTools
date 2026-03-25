@@ -102,7 +102,7 @@ export function ToolSelectionPage() {
             <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">Step 2 of 2</p>
             <h1 className="mt-1 text-2xl sm:text-3xl font-semibold text-[var(--text-primary)]">Choose your tools</h1>
             <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              {user?.displayName || user?.email || 'User'}, save the tools you use most and launch any tool to enter the main workspace.
+              {user?.displayName || user?.email || 'User'}, save the tools you use most and launch any tool from your dashboard.
             </p>
           </div>
           <div className="w-full sm:max-w-sm">
